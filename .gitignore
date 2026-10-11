@@ -1,0 +1,49 @@
+# Secrets and local configuration. Never commit these.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+id_rsa*
+id_ed25519*
+secrets/
+
+# Model weights and caches must never be committed.
+*.safetensors
+*.gguf
+*.bin
+*.ckpt
+models/
+.cache/
+huggingface/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+npm-debug.log*
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local tooling output
+.forge-backups/
+*.log
+tmp/
+uploads/

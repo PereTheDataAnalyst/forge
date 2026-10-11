@@ -1,0 +1,65 @@
+/*
+  Design tokens.
+
+  Every brand colour is derived from the supplied N-ATLAS Forge logo, measured from its pixels:
+    blues   #0184FD (vivid), #0163CE (mid), #00429A (deep)
+    greys   #585868 to #A0A6B0 (the wordmark and the right stroke of the N)
+  Tints and shades are mixes of those hues with white or black. Status colours (success,
+  warning, danger) are functional and are not part of the brand palette.
+
+  Contrast against white: blue-600 5.7:1, gray-600 5.3:1, so both pass WCAG AA for body text.
+  The vivid blue-500 is 3.7:1, so it is used for focus rings, graphics and large text only.
+*/
+:root {
+  --blue-50: #eef5ff;
+  --blue-100: #dbe9fc;
+  --blue-200: #b6d3f9;
+  --blue-500: #0184fd;
+  --blue-600: #0163ce;
+  --blue-700: #00429a;
+  --blue-800: #0a2f66;
+
+  --ink-950: #020e1f;
+  --ink-900: #0b1b30;
+  --ink-850: #071526;
+  --ink-800: #102a47;
+  --ink-700: #17304f;
+
+  --gray-50: #f6f7f9;
+  --gray-100: #eceef2;
+  --gray-200: #dde1e7;
+  --gray-300: #c3c9d2;
+  --gray-400: #a0a6b0;
+  --gray-500: #7f8691;
+  --gray-600: #646d78;
+  --gray-700: #4b535e;
+
+  --success-50: #e8f6ee;
+  --success-700: #14633a;
+  --warning-50: #fdf3e1;
+  --warning-700: #7d4705;
+  --danger-50: #fdecea;
+  --danger-600: #c0302b;
+  --danger-700: #9d2420;
+
+  --surface: #ffffff;
+  --surface-muted: var(--gray-50);
+  --border: var(--gray-200);
+  --border-strong: var(--gray-300);
+  --text: var(--ink-900);
+  --text-muted: var(--gray-600);
+
+  --font-display: "Saira", "IBM Plex Sans", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --shadow-pop: 0 18px 48px rgba(2, 14, 31, 0.28);
+  --focus-ring: 0 0 0 3px rgba(1, 132, 253, 0.4);
+
+  --container: 1160px;
+  --section-y: clamp(56px, 8vw, 104px);
+  --header-h: 64px;
+}

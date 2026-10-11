@@ -1,0 +1,4 @@
+# Test dependencies. The tests use a fake engine, so no model libraries are needed.
+-r requirements.txt
+pytest>=8.0,<9.0
+httpx>=0.27,<1.0

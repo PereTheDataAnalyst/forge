@@ -1,0 +1,6 @@
+# Model-serving dependencies. Install PyTorch FIRST, because the right build depends on your
+# hardware (CUDA version, or CPU only): https://pytorch.org/get-started/locally/
+# Note that accelerate depends on torch, so installing it first avoids downloading a default build.
+-r requirements.txt
+transformers>=4.45,<6.0
+accelerate>=0.34
