@@ -17,7 +17,7 @@
 | `csrf_validation_failed` | The CSRF cookie is missing | Reload the page, which restores it through `/auth/me` |
 | Backend refuses to start with a message about `SECRET_KEY` | `.env` still holds the placeholder | Run `.\scripts\setup-local.ps1` or set a real random secret |
 | Tests are all skipped | `TEST_DATABASE_URL` is not set | Run `.\scripts\check.ps1`, which loads it from `.env` |
-| Tests refuse to run | The database name lacks `test`, or Redis is on database 0 to 9 | Use `forge_test` and `redis://localhost:6379/15` |
+| Tests refuse to run | The database name lacks `test`, or Redis is on database 0 to 9 | Use `forge_test` and `redis://127.0.0.1:6379/15` |
 | `npm ci` fails | `frontend/package-lock.json` is not committed | Commit the lock file created by `npm install` |
 | `alembic check` reports differences | A model changed without a migration | Add a revision after the latest one |
 | Port 5173 or 8000 is in use | Another process holds it | Stop it. The frontend uses `strictPort` so it will not silently move |

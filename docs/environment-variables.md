@@ -57,7 +57,7 @@ These are read from the process environment by pytest. `scripts/check.ps1` loads
 | Variable | Description |
 | --- | --- |
 | `TEST_DATABASE_URL` | PostgreSQL URL of a dedicated database. Its name must contain `test`, or the suite refuses to run. Integration tests are skipped when unset. |
-| `TEST_REDIS_URL` | Redis URL on a logical database numbered 10 or higher, because the suite flushes it. Defaults to `redis://localhost:6379/15`. |
+| `TEST_REDIS_URL` | Redis URL on a logical database numbered 10 or higher, because the suite flushes it. Defaults to `redis://127.0.0.1:6379/15`. |
 
 ## Inference worker variables
 
