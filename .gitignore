@@ -14,7 +14,8 @@ secrets/
 *.gguf
 *.bin
 *.ckpt
-models/
+/models/
+/inference/natlas-worker/models/
 .cache/
 huggingface/
 
@@ -44,6 +45,7 @@ Thumbs.db
 
 # Local tooling output
 .forge-backups/
+.package/
 *.log
 tmp/
 uploads/
