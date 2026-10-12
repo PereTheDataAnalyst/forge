@@ -4,7 +4,7 @@ Unit tests need no services. Integration tests need PostgreSQL and Redis:
 
   TEST_DATABASE_URL  PostgreSQL URL of a dedicated database whose name contains "test"
   TEST_REDIS_URL     Redis URL on a logical database numbered 10 or higher
-                     (default: redis://localhost:6379/15)
+                     (default: redis://127.0.0.1:6379/15)
 
 scripts/setup-local.ps1 creates both. Integration tests are skipped when TEST_DATABASE_URL
 is not set. The suite never touches the development database.
@@ -23,7 +23,7 @@ for _name in [name for name in os.environ if name.startswith("NATLAS_")]:
     del os.environ[_name]
 
 TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "")
-TEST_REDIS_URL = os.environ.get("TEST_REDIS_URL", "redis://localhost:6379/15")
+TEST_REDIS_URL = os.environ.get("TEST_REDIS_URL", "redis://127.0.0.1:6379/15")
 os.environ["REDIS_URL"] = TEST_REDIS_URL
 os.environ["DATABASE_URL"] = (
     TEST_DATABASE_URL or "postgresql+asyncpg://unused:unused@127.0.0.1:1/unused"
