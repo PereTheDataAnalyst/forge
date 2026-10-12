@@ -72,6 +72,10 @@ flowchart LR
 
 `smoke-day1.ps1` prints `N-ATLAS inference: VERIFIED` only when the real model returned generated text. Otherwise it prints `NOT CONNECTED` together with the structured error the gateway produced.
 
+### No GPU on your machine
+
+See [gpu-host-notebook.md](gpu-host-notebook.md) to run the same worker on a free dual-T4 notebook and connect Forge to it with `connect-worker.ps1 -Url`.
+
 ## Not implemented yet
 
 Streaming responses, speech recognition, an official N-ATLAS API client, and any quantised or community variants. Community variants are unofficial and are deliberately not used.

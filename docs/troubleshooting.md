@@ -17,7 +17,14 @@
 | `csrf_validation_failed` | The CSRF cookie is missing | Reload the page, which restores it through `/auth/me` |
 | Backend refuses to start with a message about `SECRET_KEY` | `.env` still holds the placeholder | Run `.\scripts\setup-local.ps1` or set a real random secret |
 | Tests are all skipped | `TEST_DATABASE_URL` is not set | Run `.\scripts\check.ps1`, which loads it from `.env` |
-| Tests refuse to run | The database name lacks `test`, or Redis is on database 0 to 9 | Use `forge_test` and `redis://localhost:6379/15` |
+| Tests refuse to run | The database name lacks `test`, or Redis is on database 0 to 9 | Use `forge_test` and `redis://127.0.0.1:6379/15` |
 | `npm ci` fails | `frontend/package-lock.json` is not committed | Commit the lock file created by `npm install` |
 | `alembic check` reports differences | A model changed without a migration | Add a revision after the latest one |
 | Port 5173 or 8000 is in use | Another process holds it | Stop it. The frontend uses `strictPort` so it will not silently move |
+| Readiness or sign-in returns 503 `rate_limiter_unavailable` although Memurai is running | On Windows, `localhost` can resolve to IPv6 first and the first attempt costs about 2 seconds, which equals the Redis timeout | Use `127.0.0.1` in `REDIS_URL` and `TEST_REDIS_URL`. Check with a client the application uses, not only a port test |
+| A new source file or folder is missing on GitHub | A `.gitignore` rule also matches it. The rule `models/` once hid `backend/app/db/models/` | `git check-ignore -v <path>`, anchor the rule with a leading slash, then run `python tools\checks\ignored_source_check.py` |
+| GPU notebook: cell 2 says the session cannot reach the internet | Internet is off for the Kaggle session | Right-hand panel, Session options, Internet On, then run the cell again |
+| Kaggle accelerator options or the Internet switch are faint | The account has no verified phone number | Verify it under Phone Verification at kaggle.com/settings, then reload the notebook |
+| GPU notebook: cell 3 says Hugging Face refused access | Terms not accepted, request still pending, or the token belongs to another account | Accept the terms on the model page and create the token in that same account |
+| GPU notebook: cell 6 reports that the worker exited or the model failed | Wrong accelerator, not enough GPU memory, or a library problem | Read the log tail the cell prints. The accelerator must be GPU T4 x2 |
+| Backend reports the provider as unreachable after the notebook was restarted | The temporary tunnel address changed | `.\scripts\connect-worker.ps1 -Url <new address>`, then restart the backend |
