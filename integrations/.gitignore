@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Virtual environments (one per component: MCP server, ASR worker)
+.venv/
+.venv-*/
+
+# Local data and outputs. These can hold tokens' hashes, audit logs, audio and results.
+data/
+results/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.jsonl
+
+# Secrets. Real values never go in git.
+.env
+.env.local
+.env.*.local
+*.pem
+*.key

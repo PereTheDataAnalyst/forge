@@ -1,0 +1,368 @@
+{
+  "id": "starter-nigerian-languages",
+  "name": "Starter: English, Hausa, Igbo and Yoruba phrases",
+  "version": "1",
+  "description": "Fifteen example cases for the four languages N-ATLaS lists: short everyday phrases in both directions, and a heuristic language check. Each case lists a few accepted answers. A fail means the output matched none of them, not that it is wrong, because correct phrasing varies. The language_match checks use a diacritics and word-list heuristic and often return review. Have a native speaker read the outputs before you draw any conclusion about quality, and add accepted forms they approve.",
+  "cases": [
+    {
+      "id": "yo-good-morning-to-en",
+      "name": "Yoruba greeting to English",
+      "category": "language",
+      "language": "yo",
+      "prompt": "Translate this Yoruba greeting into English. Reply with only the translation: Ẹ kú àárọ̀",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "good morning",
+            "morning"
+          ]
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "yo-how-are-you-to-en",
+      "name": "Yoruba question to English",
+      "category": "language",
+      "language": "yo",
+      "prompt": "Translate this Yoruba question into English. Reply with only the translation: Báwo ni?",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "how are you",
+            "how is it",
+            "how are things",
+            "how is everything"
+          ]
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "ha-thank-you-to-en",
+      "name": "Hausa thanks to English",
+      "category": "language",
+      "language": "ha",
+      "prompt": "Translate this Hausa phrase into English. Reply with only the translation: Na gode",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "thank"
+          ]
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "ha-hello-to-en",
+      "name": "Hausa greeting to English",
+      "category": "language",
+      "language": "ha",
+      "prompt": "Translate this Hausa greeting into English. Reply with only the translation: Sannu",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "hello",
+            "hi",
+            "greeting"
+          ]
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "ig-hello-to-en",
+      "name": "Igbo greeting to English",
+      "category": "language",
+      "language": "ig",
+      "prompt": "Translate this Igbo greeting into English. Reply with only the translation: Ndewo",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "hello",
+            "greeting",
+            "welcome",
+            "hi"
+          ]
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "en-thank-you-to-yo",
+      "name": "English thanks to Yoruba",
+      "category": "language",
+      "language": "yo",
+      "prompt": "Translate into Yoruba. Reply with only the translation: Thank you",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "Ẹ ṣeun",
+            "O ṣeun",
+            "Mo dúpẹ́"
+          ],
+          "ignore_diacritics": true
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "en-good-morning-to-yo",
+      "name": "English greeting to Yoruba",
+      "category": "language",
+      "language": "yo",
+      "prompt": "Translate into Yoruba. Reply with only the translation: Good morning",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "Ẹ kú àárọ̀",
+            "Ẹ kàárọ̀"
+          ],
+          "ignore_diacritics": true
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "en-thank-you-to-ha",
+      "name": "English thanks to Hausa",
+      "category": "language",
+      "language": "ha",
+      "prompt": "Translate into Hausa. Reply with only the translation: Thank you",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "Na gode",
+            "gode"
+          ],
+          "ignore_diacritics": true
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "en-good-morning-to-ha",
+      "name": "English greeting to Hausa",
+      "category": "language",
+      "language": "ha",
+      "prompt": "Translate into Hausa. Reply with only the translation: Good morning",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "Ina kwana",
+            "Barka da safiya",
+            "Barka da asuba"
+          ],
+          "ignore_diacritics": true
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "en-thank-you-to-ig",
+      "name": "English thanks to Igbo",
+      "category": "language",
+      "language": "ig",
+      "prompt": "Translate into Igbo. Reply with only the translation: Thank you",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "Daalụ",
+            "Imela"
+          ],
+          "ignore_diacritics": true
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "en-good-morning-to-ig",
+      "name": "English greeting to Igbo",
+      "category": "language",
+      "language": "ig",
+      "prompt": "Translate into Igbo. Reply with only the translation: Good morning",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "contains_any",
+          "values": [
+            "Ụtụtụ ọma"
+          ],
+          "ignore_diacritics": true
+        }
+      ],
+      "tags": [
+        "starter",
+        "translation"
+      ]
+    },
+    {
+      "id": "yo-reply-language-heuristic",
+      "name": "Yoruba reply, language heuristic",
+      "category": "language",
+      "language": "yo",
+      "prompt": "Reply in Yoruba with a short, polite greeting.",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "language_match",
+          "language": "yo"
+        }
+      ],
+      "tags": [
+        "starter",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "ha-reply-language-heuristic",
+      "name": "Hausa reply, language heuristic",
+      "category": "language",
+      "language": "ha",
+      "prompt": "Reply in Hausa with a short, polite greeting.",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "language_match",
+          "language": "ha"
+        }
+      ],
+      "tags": [
+        "starter",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "ig-reply-language-heuristic",
+      "name": "Igbo reply, language heuristic",
+      "category": "language",
+      "language": "ig",
+      "prompt": "Reply in Igbo with a short, polite greeting.",
+      "max_tokens": 64,
+      "checks": [
+        {
+          "type": "not_empty"
+        },
+        {
+          "type": "language_match",
+          "language": "ig"
+        }
+      ],
+      "tags": [
+        "starter",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "en-reply-english-heuristic",
+      "name": "English reply, language heuristic",
+      "category": "language",
+      "language": "en",
+      "prompt": "In English, explain in two sentences why a market is a good place to meet neighbours.",
+      "max_tokens": 96,
+      "checks": [
+        {
+          "type": "not_empty",
+          "min_chars": 30
+        },
+        {
+          "type": "language_match",
+          "language": "en"
+        }
+      ],
+      "tags": [
+        "starter",
+        "heuristic"
+      ]
+    }
+  ]
+}
