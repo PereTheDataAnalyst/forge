@@ -30,6 +30,7 @@ Local development reads `.env` at the repository root. Production should provide
 | `CORS_ALLOWED_ORIGINS` | `empty` | Extra browser origins allowed to call the API, comma separated. Wildcards are rejected. |
 | `TRUSTED_PROXY_COUNT` | `0` | Reverse proxies you trust in front of the API, used to read the client IP from X-Forwarded-For. |
 | `MAX_REQUEST_BODY_BYTES` | `1048576` | Largest accepted request body. Extension modules may raise it for specific paths. |
+| `FRONTEND_DIST_DIR` | `unset` | Directory that holds the built web app (`frontend/dist`). When set, this process serves the web app next to the API from one origin, answering only paths that no API route matched. The production image sets it to `/app/frontend-dist`. Leave it unset in development, where the Vite server serves the web app. |
 | `AUTH_RATE_LIMIT_PER_MINUTE` | `20` | Sign-in and registration attempts per client address per minute. |
 | `LOGIN_MAX_FAILURES` | `5` | Failed sign-ins before an account is locked temporarily. A client address locks at four times this value. |
 | `LOGIN_LOCKOUT_MINUTES` | `15` | Length of the lockout and of the failure counting window. |

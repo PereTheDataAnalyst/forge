@@ -14,9 +14,9 @@ N-ATLaS is an initiative of the Federal Ministry of Communications, Innovation a
 | Accounts, projects and API keys (shown once, stored as keyed hashes, revoke and rotate) | Implemented |
 | Dashboard computed from real request data, request logs and usage counters in the database | Implemented |
 | Website, interactive request builder and documentation | Implemented |
-| N-ATLAS inference worker wrapping the official Transformers usage | Implemented. It has not yet been run against the real model. |
+| N-ATLAS inference worker wrapping the official Transformers usage | Implemented. Run against the real model on a GPU notebook on 12 October 2026, see [docs/status.md](docs/status.md). It is not hosted persistently yet. |
 | Playground, SDKs, request log viewer, metrics charts | Not built yet |
-| Evaluation, speech recognition and MCP | Not built yet. Integration points and database tables are ready. |
+| Evaluation, speech recognition and MCP | Engines are in `integrations/` as a standalone library. They are not wired into the platform yet, so they are not available in the product. |
 
 ## Quick start (Windows, PowerShell)
 
@@ -42,13 +42,15 @@ The official release is open weights on Hugging Face (`NCAIR1/N-ATLaS`, gated). 
 | `backend/` | FastAPI, SQLAlchemy, Alembic, tests |
 | `frontend/` | React, TypeScript, Vite |
 | `inference/natlas-worker/` | Runs the model behind an authenticated API |
+| `integrations/` | Evaluation Lab engine, voice pipeline and speech worker, MCP server (standalone library, see its README) |
+| `Dockerfile`, `docker/` | Production image that serves the API and the web app |
 | `scripts/` | PowerShell tooling |
 | `tools/checks/` | Dependency-free verification tools |
 | `docs/` | Documentation |
 
 ## Documentation
 
-[Architecture](docs/architecture.md), [Local development](docs/local-development.md), [Environment variables](docs/environment-variables.md), [API reference](docs/api-reference.md), [N-ATLAS integration](docs/n-atlas-integration.md), [Security](docs/security.md), [Licensing and attribution](docs/licensing-and-attribution.md), [Extension modules](docs/extension-modules.md), [Branching and handoff](docs/branching-and-handoff.md), [Deployment](docs/deployment.md), [Troubleshooting](docs/troubleshooting.md), [Status](docs/status.md).
+[Architecture](docs/architecture.md), [Local development](docs/local-development.md), [Environment variables](docs/environment-variables.md), [API reference](docs/api-reference.md), [N-ATLAS integration](docs/n-atlas-integration.md), [Security](docs/security.md), [Licensing and attribution](docs/licensing-and-attribution.md), [Extension modules](docs/extension-modules.md), [Branching and handoff](docs/branching-and-handoff.md), [Deployment](docs/deployment.md), [Model hosting](docs/model-hosting.md), [Troubleshooting](docs/troubleshooting.md), [Status](docs/status.md).
 
 ## N-ATLAS terms and licence
 
