@@ -69,6 +69,10 @@ class Settings(BaseSettings):
     cors_allowed_origins: str = ""
     trusted_proxy_count: int = Field(default=0, ge=0, le=5)
     max_request_body_bytes: int = Field(default=1_048_576, ge=1024, le=50_000_000)
+    # Directory that holds the built web app (frontend/dist). When set, this process serves the
+    # web app next to the API from one origin. The production image sets it. Leave it unset in
+    # development, where the Vite server serves the web app.
+    frontend_dist_dir: str | None = None
 
     # Rate limiting
     auth_rate_limit_per_minute: int = Field(default=20, ge=1)
@@ -219,6 +223,7 @@ class Settings(BaseSettings):
             "natlas_model_id": self.natlas_model_id,
             "cookie_secure": self.cookie_secure,
             "api_docs_enabled": self.enable_api_docs,
+            "web_app_served": bool((self.frontend_dist_dir or "").strip()),
         }
 
 

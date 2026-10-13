@@ -27,6 +27,7 @@ from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
 from app.providers.natlas import NAtlasProvider
 from app.services.gateway_service import GatewayService
+from app.web.spa import mount_spa
 
 log = get_logger(__name__)
 
@@ -137,4 +138,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(api_router)
     load_extension_modules(app)
+    # Last, so the web app only answers paths that no API route matched.
+    mount_spa(app, settings.frontend_dist_dir)
     return app

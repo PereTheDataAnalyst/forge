@@ -1,0 +1,26 @@
+# Keeps the build context small and keeps secrets and local state out of the image.
+.git
+.github
+.env
+.env.*
+**/.env
+**/.env.*
+**/node_modules
+**/.venv
+**/.venv-mcp
+**/venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+**/*.log
+frontend/dist
+backend/tests
+docs
+tools
+scripts
+inference
+integrations/data
+.forge-backups
+.package
+*.md
