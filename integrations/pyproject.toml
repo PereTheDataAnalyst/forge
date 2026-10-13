@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forge-integrations"
+version = "0.1.0"
+description = "N-ATLAS Forge advanced integrations: Evaluation Lab engine, N-ATLAS ASR and voice pipeline, and the Forge MCP server."
+readme = "README.md"
+requires-python = ">=3.10"
+# The core (evaluation, voice pipeline, security primitives) has no third-party dependencies,
+# so it can be installed into any Python backend without version conflicts.
+dependencies = []
+
+[project.optional-dependencies]
+# Forge MCP server. Install into its own virtual environment: the SDK needs pydantic>=2.12.
+# The official client (used by the example and one test) comes with the SDK.
+mcp = ["mcp>=2.2,<3", "uvicorn>=0.31.1"]
+# Reference ASGI adapters and the N-ATLAS ASR worker service (HTTP layer only).
+http = ["starlette>=0.40", "python-multipart>=0.0.9", "uvicorn>=0.30"]
+# N-ATLAS ASR worker: the HTTP layer plus the official Whisper-based models.
+asr = [
+  "starlette>=0.40",
+  "python-multipart>=0.0.9",
+  "uvicorn>=0.30",
+  "numpy>=1.26",
+  "torch>=2.2",
+  "transformers>=4.44",
+]
+# The test suite runs with unittest; pytest is optional. The MCP tests need the "mcp" extra as well.
+dev = ["pytest>=8", "jsonschema>=4.20"]
+
+[project.scripts]
+forge-asr-service = "forge_integrations.asr_service.__main__:main"
+forge-mcp-server = "forge_integrations.mcp.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"forge_integrations.evaluation" = ["starter/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

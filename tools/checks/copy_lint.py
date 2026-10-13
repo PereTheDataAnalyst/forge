@@ -31,7 +31,9 @@ for path in ROOT.rglob("*"):
         continue
     count += 1
     rel = path.relative_to(ROOT)
-    if "\u2014" in text:
+    # Test files may contain the character as an assertion input, for example a check that tool
+    # descriptions have none. Product copy and documentation never may.
+    if "\u2014" in text and "tests" not in path.relative_to(ROOT).parts:
         problems.append(f"{rel}: em dash")
     if EMOJI.search(text):
         problems.append(f"{rel}: emoji")

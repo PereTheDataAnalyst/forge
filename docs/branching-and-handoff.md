@@ -4,12 +4,12 @@
 
 | Branch | Purpose |
 | --- | --- |
-| `main` | Stable releases only. Never push to it directly. |
-| `develop` | Integration branch. Pull requests merge here. |
-| `competition-mvp` | Controlled branch for the competition submission. Cut from `develop` and updated by pull request. |
-| `feature/<area>-<summary>` | Work in progress, for example `feature/core-platform-day1` |
+| `main` | What the deployment platform builds and deploys, so it must always build. Changes arrive by pull request after `scripts\check.ps1` passes. Never push to it directly. |
+| `develop` | Kept equal to `main` after each merge. |
+| `competition-mvp` | The competition submission as it was handed in. It is not changed after submission. The tag `submission-2026-10-12` marks the same commit. |
+| `feature/<area>-<summary>` | Work in progress, for example `feature/wire-evaluation-lab` |
 
-Both build chats work on separate feature branches and merge through pull requests, so neither overwrites the other.
+The project has a single maintainer now. Work happens on a feature branch and reaches `main` through a pull request, which keeps a reviewable history and lets `scripts\check.ps1` run before anything is deployed.
 
 ## Commits
 
