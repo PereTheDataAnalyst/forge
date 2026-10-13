@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+# Templates that hold names only, never values, for example .env.integrations.example.
+!.env.*.example
 *.pem
 *.key
 *.pfx
