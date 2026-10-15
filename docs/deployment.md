@@ -1,6 +1,6 @@
 # Deployment
 
-**Status: the container has not been built or deployed yet.** The image definition, the entrypoint and the steps below are written and statically checked. [status.md](status.md) records the first real build and deployment when it happens.
+**Status: deployed.** The image was built from `main` and run on a container platform on 14 October 2026, and the smoke test passed against the live address. [status.md](status.md) records the evidence.
 
 Before changing any live environment, inspect its current configuration: firewall rules, exposed ports, service bindings, reverse proxy, TLS, database and Redis exposure, file permissions, secrets, backups and monitoring. Do not assume any of them, and never modify a live server blindly.
 

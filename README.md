@@ -2,9 +2,38 @@
 
 Developer infrastructure for building with N-ATLAS. Built by StackTechnology for the National AI Innovation Challenge 2026 (Developer Infrastructure).
 
+**Live demo: <https://natlas-forge-18d307.prostackng.com.ng>**
+
 N-ATLaS is an initiative of the Federal Ministry of Communications, Innovation and Digital Economy, and powered by Awarri Technologies. N-ATLAS Forge is an independent project and is not endorsed by these organisations.
 
-> **Status: foundation build.** [docs/status.md](docs/status.md) states exactly what exists and what has been verified. Nothing in this repository returns invented model output.
+> **Status: foundation build, deployed.** [docs/status.md](docs/status.md) states exactly what exists and what has been verified. Nothing in this repository returns invented model output.
+
+## Try the live demo
+
+1. Open <https://natlas-forge-18d307.prostackng.com.ng> and choose **Create account**. There is no email verification yet, so any email address works.
+2. Create a project, then create an API key. The full key is shown once, so copy it.
+3. Send a request to the gateway.
+
+   ```bash
+   curl -X POST https://natlas-forge-18d307.prostackng.com.ng/api/v1/chat \
+     -H "Authorization: Bearer YOUR_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"messages":[{"role":"user","content":"Say hello in one short sentence."}],"max_tokens":64}'
+   ```
+
+   The same request in Windows PowerShell:
+
+   ```powershell
+   $env:FORGE_API_KEY = "YOUR_API_KEY"
+   $body = '{"messages":[{"role":"user","content":"Say hello in one short sentence."}],"max_tokens":64}'
+   Invoke-RestMethod -Method Post -Uri https://natlas-forge-18d307.prostackng.com.ng/api/v1/chat `
+     -Headers @{ Authorization = "Bearer $env:FORGE_API_KEY" } `
+     -ContentType "application/json; charset=utf-8" -Body $body
+   ```
+
+4. Open the **Dashboard**. The request appears with its status, latency and token counts. Prompts and responses are not stored.
+
+The model runs on a separate GPU host that is not always on. The **N-ATLAS inference** card on the dashboard shows whether it is connected right now. When it is not, chat requests return a structured `provider_unavailable` error and everything else keeps working. The in-app **Documentation** page covers authentication, endpoints, errors and rate limits. What has been run, by whom and when is recorded in [docs/status.md](docs/status.md).
 
 ## What it provides today
 
@@ -14,6 +43,7 @@ N-ATLaS is an initiative of the Federal Ministry of Communications, Innovation a
 | Accounts, projects and API keys (shown once, stored as keyed hashes, revoke and rotate) | Implemented |
 | Dashboard computed from real request data, request logs and usage counters in the database | Implemented |
 | Website, interactive request builder and documentation | Implemented |
+| Production container that serves the API and the web app, deployed on a container platform | Implemented. The smoke test against the live address passed on 14 October 2026, see [docs/status.md](docs/status.md). |
 | N-ATLAS inference worker wrapping the official Transformers usage | Implemented. Run against the real model on a GPU notebook on 12 October 2026, see [docs/status.md](docs/status.md). It is not hosted persistently yet. |
 | Playground, SDKs, request log viewer, metrics charts | Not built yet |
 | Evaluation, speech recognition and MCP | Engines are in `integrations/` as a standalone library. They are not wired into the platform yet, so they are not available in the product. |
