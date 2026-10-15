@@ -1,7 +1,7 @@
 """Repository copy lint. Usage: python tools/checks/copy_lint.py [repo_root]
 
-Fails on: em dashes, banned marketing phrases, emoji, the obsolete company name, and non-ASCII
-characters in PowerShell scripts. Standard library only.
+Fails on: em dashes, banned marketing phrases, emoji, the obsolete company name (in prose, not
+inside web addresses), and non-ASCII characters in PowerShell scripts. Standard library only.
 """
 import pathlib
 import re
@@ -12,6 +12,8 @@ BANNED = ["AI-powered", "AI-first", "revolutionary", "next-generation", "cutting
           "intelligent AI", "powered by artificial intelligence", "game-changing", "seamless"]
 EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B50\u2705\u274C]")
 OLD_NAME = re.compile("prostack", re.IGNORECASE)
+# A web address may contain the host name of the deployment platform. Only prose is checked.
+URL = re.compile(r"https?://[^\s)>\]\"']+")
 EXTENSIONS = {".ts", ".tsx", ".css", ".py", ".md", ".json", ".html", ".yml", ".yaml", ".ps1", ".toml", ".ini", ".txt", ".mako"}
 SKIP_DIRS = {"node_modules", "__pycache__", ".git", ".venv", "dist", ".forge-backups"}
 # This file names the banned items on purpose.
@@ -37,7 +39,7 @@ for path in ROOT.rglob("*"):
         problems.append(f"{rel}: em dash")
     if EMOJI.search(text):
         problems.append(f"{rel}: emoji")
-    if OLD_NAME.search(text):
+    if OLD_NAME.search(URL.sub("", text)):
         problems.append(f"{rel}: obsolete company name")
     if path.suffix != ".py":
         for phrase in BANNED:
