@@ -27,9 +27,11 @@ declare module "react/jsx-runtime" {
     type ElementType = string | ((props: never) => ReactNode);
     interface ChangeLike { target: EventTarget & { value: string; checked: boolean } }
     interface MouseLike { preventDefault(): void; target: EventTarget }
+    interface KeyLike { key: string; ctrlKey: boolean; metaKey: boolean; preventDefault(): void }
     interface DomProps {
       onChange?: (event: ChangeLike) => void;
       onClick?: (event: MouseLike) => void;
+      onKeyDown?: (event: KeyLike) => void;
       onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
       onClose?: (event: MouseLike) => void;
       onCancel?: (event: MouseLike) => void;

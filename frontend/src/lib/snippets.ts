@@ -7,18 +7,25 @@ export interface ChatSnippetInput {
   language: string;
   temperature: number;
   maxTokens: number;
+  /** A full conversation. When set it is sent instead of `prompt`. */
+  messages?: { role: string; content: string }[];
+  topP?: number;
+  repetitionPenalty?: number;
 }
 
 export type SnippetLanguage = "curl" | "powershell" | "javascript" | "python";
 
 export function requestBody(input: ChatSnippetInput): Record<string, unknown> {
-  return {
+  const body: Record<string, unknown> = {
     model: input.model,
-    messages: [{ role: "user", content: input.prompt }],
+    messages: input.messages ?? [{ role: "user", content: input.prompt }],
     max_tokens: input.maxTokens,
     temperature: input.temperature,
-    language: input.language,
   };
+  if (input.topP !== undefined) body.top_p = input.topP;
+  if (input.repetitionPenalty !== undefined) body.repetition_penalty = input.repetitionPenalty;
+  if (input.language) body.language = input.language;
+  return body;
 }
 
 function shellQuote(value: string): string {

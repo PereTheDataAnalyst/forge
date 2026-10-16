@@ -1,7 +1,10 @@
 import type {
   ApiKey,
+  ChatRequestBody,
+  ChatResponse,
   CreatedApiKey,
   DashboardSummary,
+  ModelInfo,
   Project,
   Readiness,
   RotatedApiKey,
@@ -172,6 +175,14 @@ export const api = {
   },
   dashboard: {
     summary: (days = 30) => request<DashboardSummary>("GET", `/dashboard/summary?days=${days}`),
+  },
+  playground: {
+    models: (projectId: string) =>
+      request<{ data: ModelInfo[] }>("GET", `/projects/${projectId}/playground/models`).then(
+        (r) => r.data,
+      ),
+    chat: (projectId: string, body: ChatRequestBody, signal?: AbortSignal) =>
+      request<ChatResponse>("POST", `/projects/${projectId}/playground/chat`, body, signal),
   },
   health: {
     ready: () => request<Readiness>("GET", "/health/ready"),

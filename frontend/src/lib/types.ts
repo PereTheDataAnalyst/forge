@@ -115,3 +115,53 @@ export interface Readiness {
   status: "ok" | "degraded" | "unavailable";
   checks: { database: ReadinessCheck; redis: ReadinessCheck; provider: ReadinessCheck };
 }
+
+export type LanguageCode = "en" | "ha" | "ig" | "yo";
+export type ChatRole = "system" | "user" | "assistant";
+
+export interface ChatMessage {
+  role: ChatRole;
+  content: string;
+}
+
+/** Body of POST /api/v1/chat and POST /api/v1/projects/{id}/playground/chat. */
+export interface ChatRequestBody {
+  model?: string;
+  messages: ChatMessage[];
+  max_tokens?: number;
+  temperature?: number;
+  top_p?: number;
+  repetition_penalty?: number;
+  language?: LanguageCode;
+}
+
+export interface ChatUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+export interface ChatResponse {
+  request_id: string;
+  model: string;
+  message: { role: "assistant"; content: string };
+  finish_reason: "stop" | "length";
+  usage: ChatUsage;
+  latency_ms: number;
+}
+
+export type ModelStatus = "available" | "unavailable" | "not_configured" | "loading";
+
+export interface ModelInfo {
+  id: string;
+  kind: "llm" | "asr";
+  display_name: string;
+  architecture: string | null;
+  parameters: string | null;
+  languages: string[];
+  context_length_tokens: number | null;
+  license: string;
+  source_url: string;
+  attribution: string | null;
+  status: ModelStatus;
+}

@@ -53,7 +53,7 @@ export const layers: Layer[] = [
   {
     name: "Playground",
     summary: "An interactive workspace for prompts, parameters, conversation history and raw requests.",
-    status: "in_development",
+    status: "available",
   },
   {
     name: "SDKs",

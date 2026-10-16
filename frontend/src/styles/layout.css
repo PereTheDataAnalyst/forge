@@ -234,8 +234,9 @@
 }
 
 @media (max-width: 880px) {
+  /* minmax(0, ...) lets the navigation bar scroll sideways instead of widening the page. */
   .app-shell {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .sidebar {
     position: static;
