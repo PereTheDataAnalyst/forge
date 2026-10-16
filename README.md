@@ -45,7 +45,8 @@ The model runs on a separate GPU host that is not always on. The **N-ATLAS infer
 | Website, interactive request builder and documentation | Implemented |
 | Production container that serves the API and the web app, deployed on a container platform | Implemented. The smoke test against the live address passed on 14 October 2026, see [docs/status.md](docs/status.md). |
 | N-ATLAS inference worker wrapping the official Transformers usage | Implemented. Run against the real model on a GPU notebook on 12 October 2026, see [docs/status.md](docs/status.md). It is not hosted persistently yet. |
-| Playground, SDKs, request log viewer, metrics charts | Not built yet |
+| Playground: prompts through your browser session, parameters, history, stop, raw request and response, generated code | Implemented, see [docs/playground.md](docs/playground.md) |
+| SDKs, request log viewer, metrics charts | Not built yet |
 | Evaluation, speech recognition and MCP | Engines are in `integrations/` as a standalone library. They are not wired into the platform yet, so they are not available in the product. |
 
 ## Quick start (Windows, PowerShell)

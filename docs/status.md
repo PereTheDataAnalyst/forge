@@ -61,6 +61,16 @@ Recorded from the owner's own build log, command output and screenshots.
 | Wiring of those modules into the gateway, database and screens | **Not done.** The library is not imported by the backend yet. Evaluation, speech and MCP are not available in the product |
 | Production container (`Dockerfile`, `docker/entrypoint.sh`) and web app served by the API process (`backend/app/web/spa.py`) | Built and deployed, see the section above |
 
+## Added in the playground build, 15 October 2026
+
+| Item | State |
+| --- | --- |
+| Playground routes (`backend/app/api/v1/playground.py`) and tests (`backend/tests/test_playground.py`, `provider_double.py`) | Written, compiled and checked by `static_check.py`. **Not run**: the tests need PostgreSQL and Redis, which were not available where this was built. Run `scripts\check.ps1` |
+| Playground page (`frontend/src/extensions/playground/`) | Type-checked with the stub project (strict, no unused locals). Bundled with the real app shell and driven in headless Chromium against a mock API: 18 checks covering send, CSRF header, history, regenerate, parameter validation, provider error with request ID, stop, generated code in four languages, laptop, wide and phone widths, and a clean console. Not yet seen against the real backend or the real model |
+| Navigation bar at 390 px | Found by that browser run: with four items the bar widened the whole page. Fixed in `layout.css` and re-checked |
+| Snippet builder (`lib/snippets.ts`) | Output for every existing caller is byte-identical to `main` (8 outputs compared). "Language not set" now omits the field, where it used to send an empty string the API rejects |
+| Owner verification | Pending: `check.ps1`, then `smoke-day1.ps1` against the live address with the model connected |
+
 ## Not yet executed
 
 | Item | Why it is unverified |
@@ -70,7 +80,7 @@ Recorded from the owner's own build log, command output and screenshots.
 | Database backups and a restore test on the platform | Not set up |
 | Worker unit tests | The worker environment is not created on the owner's machine |
 | A persistent model host | The model runs on a temporary notebook. See [model-hosting.md](model-hosting.md) |
-| Playground, SDKs, request log viewer, metrics charts | Not built |
+| SDKs, request log viewer, metrics charts | Not built |
 | Speech recognition inference | No speech worker has been run |
 | The interface at narrow widths and the landing page in a real browser | Not recorded |
 

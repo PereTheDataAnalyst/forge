@@ -175,6 +175,28 @@ if ($chat.Status -eq 200) {
     }
 }
 
+Write-Step "6b. Playground (browser session, no API key)"
+$pgBase = "/api/v1/projects/$projectId/playground"
+$providerCodes = @("provider_not_configured", "provider_unavailable", "provider_loading", "provider_busy", "provider_timeout")
+$pgModels = Invoke-Api -Method GET -Path "$pgBase/models"
+Assert-Step "the playground lists the text model" ($pgModels.Status -eq 200 -and @($pgModels.Json.data).Count -ge 1 -and $pgModels.Json.data[0].kind -eq "llm") "(status $($pgModels.Status))"
+$pgForged = Invoke-Api -Method POST -Path "$pgBase/chat" -JsonBody $chatBody -Csrf $false
+Assert-Step "a playground request without a CSRF token is rejected" ($pgForged.Status -eq 403 -and (Get-ErrorCode $pgForged) -eq "csrf_validation_failed") "(status $($pgForged.Status))"
+$pgChat = Invoke-Api -Method POST -Path "$pgBase/chat" -JsonBody $chatBody
+if ($pgChat.Status -eq 200) {
+    $pgReply = [string]$pgChat.Json.message.content
+    Assert-Step "the playground returns generated text" ($pgReply.Length -gt 0)
+    Assert-Step "the playground reports usage, latency and a request ID" ($pgChat.Json.usage.total_tokens -gt 0 -and $null -ne $pgChat.Json.request_id -and $pgChat.Json.latency_ms -ge 0)
+} else {
+    $pgCode = Get-ErrorCode $pgChat
+    if ($providerCodes -contains $pgCode) {
+        Write-Warn2 "the playground reached the gateway, but inference is not available ($pgCode)."
+        Assert-Step "the playground reports it as a structured error with a request ID" ($null -ne $pgChat.RequestId -and $null -ne $pgChat.Json.error.request_id)
+    } else {
+        Assert-Step "playground chat request" $false "(status $($pgChat.Status), code $pgCode)"
+    }
+}
+
 Write-Step "7. Dashboard"
 $dashboard = Invoke-Api -Method GET -Path "/api/v1/dashboard/summary"
 Assert-Step "the dashboard counts the request" ($dashboard.Status -eq 200 -and $dashboard.Json.totals.requests -ge 1)

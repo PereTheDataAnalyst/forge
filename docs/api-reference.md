@@ -80,7 +80,9 @@ These serve the web app. State-changing calls need the `X-CSRF-Token` header (va
 | `POST /projects/{id}/api-keys/{key_id}/revoke` | Revoke | Idempotent. |
 | `POST /projects/{id}/api-keys/{key_id}/rotate` | Rotate | Body `{ grace_period_seconds? }` (0 to 86400). Returns `new_key` with the full key and `previous`. 409 `api_key_not_active`. |
 | `GET /dashboard/summary?days=30` | Totals and recent activity | `days` from 1 to 90. All figures come from stored request data. |
+| `GET /projects/{id}/playground/models` | Text models with live status | Used by the Playground. `{ "data": [...] }`. 404 `project_not_found` for missing or foreign projects. |
+| `POST /projects/{id}/playground/chat` | Generate a reply with your session | Same body and response as `POST /chat`, see [playground.md](playground.md). Needs the CSRF header. Logged with source `playground`. 503 `provider_unavailable` while the model host is away. |
 
 ## Rate limits
 
-Gateway: `GATEWAY_RATE_LIMIT_PER_MINUTE` per API key, fixed one-minute window. Authentication: `AUTH_RATE_LIMIT_PER_MINUTE` per client address, and an account locks for `LOGIN_LOCKOUT_MINUTES` after `LOGIN_MAX_FAILURES` failed sign-ins. A limited request returns 429 with `Retry-After`.
+Gateway: `GATEWAY_RATE_LIMIT_PER_MINUTE` per API key (per signed-in user for the Playground), fixed one-minute window. Authentication: `AUTH_RATE_LIMIT_PER_MINUTE` per client address, and an account locks for `LOGIN_LOCKOUT_MINUTES` after `LOGIN_MAX_FAILURES` failed sign-ins. A limited request returns 429 with `Retry-After`.
