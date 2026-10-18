@@ -123,8 +123,9 @@ function RecentRequests({ summary }: { summary: DashboardSummary }) {
       {summary.recent_requests.length === 0 ? (
         <div className="panel__body">
           <EmptyState title="No requests yet">
-            Requests made with a project API key appear here with status, latency, model and token
-            counts. Prompts and responses are not stored.
+            Requests made with a project API key, the Playground or an evaluation run appear here
+            with status, latency, model and token counts. Prompts and responses are not stored with
+            them.
           </EmptyState>
         </div>
       ) : (
@@ -248,7 +249,15 @@ function EvaluationPanel({ summary }: { summary: DashboardSummary }) {
             <tbody>
               {summary.recent_evaluation_runs.map((run) => (
                 <tr key={run.id}>
-                  <td>{run.evaluation_name ?? "Untitled"}</td>
+                  <td>
+                    {run.project_id ? (
+                      <Link to={`/app/evaluations/${run.project_id}/runs/${run.id}`}>
+                        {run.evaluation_name ?? "Untitled"}
+                      </Link>
+                    ) : (
+                      (run.evaluation_name ?? "Untitled")
+                    )}
+                  </td>
                   <td className="mono">{run.model ?? "Unknown"}</td>
                   <td>{run.status}</td>
                   <td>{formatRelative(run.created_at)}</td>

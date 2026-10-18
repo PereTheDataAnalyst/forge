@@ -50,6 +50,13 @@ Local development reads `.env` at the repository root. Production should provide
 | `NATLAS_DEFAULT_TEMPERATURE` | `0.1` | temperature used when a request omits it. Mirrors the official model card example. |
 | `NATLAS_DEFAULT_TOP_P` | `1.0` | top_p used when a request omits it. |
 | `NATLAS_DEFAULT_REPETITION_PENALTY` | `1.12` | repetition_penalty used when a request omits it. Mirrors the official model card example. |
+| `EVAL_MAX_CASES` | `100` | Most cases in one evaluation dataset. |
+| `EVAL_MAX_CONCURRENCY` | `2` | Model calls one evaluation run makes at once. Keep it low: the model host handles one generation at a time. |
+| `EVAL_CALL_TIMEOUT_SECONDS` | `90.0` | Time allowed for one model call during a run. |
+| `EVAL_MAX_CONCURRENT_RUNS_PER_PROJECT` | `1` | Runs one project may have in progress. |
+| `EVAL_RUNS_PER_HOUR` | `20` | Runs one user may start per hour. |
+| `EVAL_MAX_RUN_SECONDS` | `900` | A run that takes longer is stopped and keeps the results it has. |
+| `EVAL_MAX_EVALUATIONS_PER_PROJECT` | `50` | Active datasets per project. |
 
 ## Test-only variables
 

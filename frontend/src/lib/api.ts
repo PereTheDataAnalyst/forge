@@ -2,12 +2,19 @@ import type {
   ApiKey,
   ChatRequestBody,
   ChatResponse,
+  CheckType,
   CreatedApiKey,
   DashboardSummary,
+  EvaluationDetail,
+  EvaluationSummary,
   ModelInfo,
   Project,
   Readiness,
   RotatedApiKey,
+  RunHandle,
+  RunListItem,
+  RunStatus,
+  StarterDataset,
   User,
 } from "./types";
 
@@ -183,6 +190,44 @@ export const api = {
       ),
     chat: (projectId: string, body: ChatRequestBody, signal?: AbortSignal) =>
       request<ChatResponse>("POST", `/projects/${projectId}/playground/chat`, body, signal),
+  },
+  evaluations: {
+    starters: () =>
+      request<{ data: StarterDataset[] }>("GET", "/evaluations/starters").then((r) => r.data),
+    checks: () => request<{ data: CheckType[] }>("GET", "/evaluations/checks").then((r) => r.data),
+    list: (projectId: string) =>
+      request<{ data: EvaluationSummary[] }>("GET", `/projects/${projectId}/evaluations`).then(
+        (r) => r.data,
+      ),
+    create: (projectId: string, body: { starter_id: string } | { dataset: unknown }) =>
+      request<EvaluationDetail>("POST", `/projects/${projectId}/evaluations`, body),
+    get: (projectId: string, evaluationId: string) =>
+      request<EvaluationDetail>("GET", `/projects/${projectId}/evaluations/${evaluationId}`),
+    archive: (projectId: string, evaluationId: string) =>
+      request<void>("DELETE", `/projects/${projectId}/evaluations/${evaluationId}`),
+    startRun: (
+      projectId: string,
+      body: { evaluation_id: string; model?: string; prompt_version?: string },
+    ) => request<RunHandle>("POST", `/projects/${projectId}/evaluation-runs`, body),
+    runs: (projectId: string) =>
+      request<{ data: RunListItem[] }>("GET", `/projects/${projectId}/evaluation-runs`).then(
+        (r) => r.data,
+      ),
+    run: (projectId: string, runId: string, signal?: AbortSignal) =>
+      request<RunStatus>(
+        "GET",
+        `/projects/${projectId}/evaluation-runs/${runId}`,
+        undefined,
+        signal,
+      ),
+    cancel: (projectId: string, runId: string) =>
+      request<{ cancelling: boolean }>(
+        "POST",
+        `/projects/${projectId}/evaluation-runs/${runId}/cancel`,
+      ),
+    /** A plain link: the browser sends the session cookie, and the server answers with a file. */
+    exportUrl: (projectId: string, runId: string, format: "csv" | "json") =>
+      `${API_PREFIX}/projects/${projectId}/evaluation-runs/${runId}/export?format=${format}`,
   },
   health: {
     ready: () => request<Readiness>("GET", "/health/ready"),

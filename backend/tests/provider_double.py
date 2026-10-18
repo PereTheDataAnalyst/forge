@@ -5,6 +5,8 @@ scopes, rate limits, request logging and usage metering run for real while no ne
 made. Runtime code never imports this module.
 """
 
+import asyncio
+
 from fastapi import FastAPI
 
 from app.providers.base import (
@@ -28,6 +30,10 @@ class ScriptedProvider(ModelProvider):
         # Items are returned (or raised, for exceptions) in order. When empty, a default reply
         # is returned.
         self.replies: list[ChatResult | Exception] = []
+        # What `list_models` reports for the text model: available, unavailable, loading.
+        self.model_status = "available"
+        # Seconds each chat call takes, to test cancellation and concurrency limits.
+        self.delay_seconds = 0.0
 
     async def startup(self) -> None:
         return None
@@ -51,7 +57,7 @@ class ScriptedProvider(ModelProvider):
                 license="N-ATLaS Terms of Use",
                 source_url="https://huggingface.co/NCAIR1/N-ATLaS",
                 attribution="Test attribution text.",
-                status="available",
+                status=self.model_status,
             ),
             ModelInfo(
                 id="NCAIR1/Yoruba-ASR",
@@ -73,6 +79,8 @@ class ScriptedProvider(ModelProvider):
 
     async def chat(self, request: ChatRequest) -> ChatResult:
         self.calls.append(request)
+        if self.delay_seconds:
+            await asyncio.sleep(self.delay_seconds)
         if self.replies:
             item = self.replies.pop(0)
             if isinstance(item, Exception):

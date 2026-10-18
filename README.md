@@ -31,7 +31,7 @@ N-ATLaS is an initiative of the Federal Ministry of Communications, Innovation a
      -ContentType "application/json; charset=utf-8" -Body $body
    ```
 
-4. Open the **Dashboard**. The request appears with its status, latency and token counts. Prompts and responses are not stored.
+4. Open the **Dashboard**. The request appears with its status, latency and token counts. Prompts and responses are not stored in request logs.
 
 The model runs on a separate GPU host that is not always on. The **N-ATLAS inference** card on the dashboard shows whether it is connected right now. When it is not, chat requests return a structured `provider_unavailable` error and everything else keeps working. The in-app **Documentation** page covers authentication, endpoints, errors and rate limits. What has been run, by whom and when is recorded in [docs/status.md](docs/status.md).
 
@@ -47,7 +47,8 @@ The model runs on a separate GPU host that is not always on. The **N-ATLAS infer
 | N-ATLAS inference worker wrapping the official Transformers usage | Implemented. Run against the real model on a GPU notebook on 12 October 2026, see [docs/status.md](docs/status.md). It is not hosted persistently yet. |
 | Playground: prompts through your browser session, parameters, history, stop, raw request and response, generated code | Implemented, see [docs/playground.md](docs/playground.md) |
 | SDKs, request log viewer, metrics charts | Not built yet |
-| Evaluation, speech recognition and MCP | Engines are in `integrations/` as a standalone library. They are not wired into the platform yet, so they are not available in the product. |
+| Evaluation Lab: datasets (starters or your own JSON), runs through the gateway, per-case results, summary, CSV and JSON export, dashboard panel | Implemented, see [docs/evaluation-lab.md](docs/evaluation-lab.md) |
+| Speech recognition and MCP | Engines are in `integrations/` as a standalone library. They are not wired into the platform yet, so they are not available in the product. |
 
 ## Quick start (Windows, PowerShell)
 

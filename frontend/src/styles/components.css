@@ -258,6 +258,9 @@
 
 /* Tables and panels ------------------------------------------------------------------------ */
 .table-wrap {
+  /* Contains absolutely positioned content, such as visually hidden header labels, so it
+     scrolls with the table instead of widening the page. */
+  position: relative;
   overflow-x: auto;
 }
 .table {

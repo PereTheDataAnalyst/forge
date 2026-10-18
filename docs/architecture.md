@@ -49,7 +49,7 @@ Middleware order, outermost first: request ID, security headers, access log with
 3. `GatewayService.chat` checks the `chat.create` scope, then the per-key rate limit.
 4. Messages and parameters are validated, and the model is checked against the provider.
 5. `NAtlasProvider` calls the inference worker. The destination is fixed by configuration and never influenced by user input.
-6. A request log row and the daily usage counters are written, even for failures. Prompts and responses are not stored.
+6. A request log row and the daily usage counters are written, even for failures. Prompts and responses are not stored with it. The Evaluation Lab keeps its own dataset and result tables on purpose, see [evaluation-lab.md](evaluation-lab.md).
 7. The response carries the request ID and rate limit headers.
 
 ## Providers

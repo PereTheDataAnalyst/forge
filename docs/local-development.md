@@ -57,3 +57,13 @@ See [n-atlas-integration.md](n-atlas-integration.md). Without a connected worker
 ## Adding a database change
 
 Create a new Alembic revision after `0002` and keep the model definition in `app/db/models` consistent with it. `alembic check` must report no differences. Never edit an applied revision.
+
+## The evaluation library
+
+The backend imports the Evaluation Lab engine from the standalone library in `integrations/`. `setup-local.ps1` installs it into `backend\.venv`. If you created the environment before the Evaluation Lab existed, install it once:
+
+```powershell
+.\backend\.venv\Scripts\python.exe -m pip install -e .\integrations
+```
+
+`scripts\check.ps1` has a gate named "Backend: evaluation library is installed" that fails with `No module named 'forge_integrations'` when this step is missing. The production image installs the library in the `Dockerfile` before the backend.

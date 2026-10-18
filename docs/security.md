@@ -18,7 +18,7 @@ Security is a design requirement from the first commit. This page maps each cont
 | Request size | Limit by `Content-Length` and while streaming, per-path overrides | `middleware/body_limit.py` |
 | Outbound requests | One fixed destination from configuration, redirects off, proxy environment ignored | `providers/natlas.py` |
 | Errors | One safe shape with a request ID. Unhandled exceptions become a generic 500 and the details stay in the server log. | `core/errors.py`, `middleware/access_log.py` |
-| Logging | Structured logs with automatic redaction of API keys, bearer tokens, Hugging Face tokens, URL credentials and sensitive keys. Prompts and responses are never stored. | `core/redaction.py`, `core/logging.py` |
+| Logging | Structured logs with automatic redaction of API keys, bearer tokens, Hugging Face tokens, URL credentials and sensitive keys. Request logs never contain prompts or responses. The Evaluation Lab stores dataset prompts and model outputs by design, see [evaluation-lab.md](evaluation-lab.md). | `core/redaction.py`, `core/logging.py` |
 | Headers | `nosniff`, frame denial, referrer policy, permissions policy, COOP/CORP, strict CSP and `no-store` for API responses, HSTS in production | `middleware/security_headers.py` |
 | Secrets | Environment only. Placeholder or short secrets are refused outside tests. Validation errors hide input values. | `core/config.py` |
 | Audit | Registration, sign-in, failed sign-in, logout, project and key events | `services/audit.py` |

@@ -34,7 +34,7 @@ export const securityControls: Control[] = [
   {
     title: "Logging",
     description:
-      "Structured logs with automatic redaction of keys, tokens and passwords. Prompts and responses are not stored.",
+      "Structured logs with automatic redaction of keys, tokens and passwords. Request logs never contain prompts or responses. Only the Evaluation Lab stores them, on purpose, so you can inspect failed cases.",
   },
   {
     title: "Access control",
