@@ -210,6 +210,8 @@
   max-width: 1120px;
   padding: 32px clamp(16px, 3vw, 40px) 64px;
   display: grid;
+  /* One column that may shrink: its automatic width would follow the widest table. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
 }
 

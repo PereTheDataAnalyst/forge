@@ -63,7 +63,7 @@ export const layers: Layer[] = [
   {
     name: "Evaluation",
     summary: "Test cases and runs with deterministic checks, latency and failure rates per language.",
-    status: "in_development",
+    status: "available",
   },
   {
     name: "Voice",

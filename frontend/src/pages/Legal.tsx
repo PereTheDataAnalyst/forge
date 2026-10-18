@@ -60,10 +60,18 @@ export function PrivacyPage() {
           each gateway request.
         </li>
         <li>API keys: a public prefix and a keyed hash. The full key is never stored.</li>
+        <li>
+          Evaluation Lab data, only if you use it: the datasets you add (your prompts and checks)
+          and the results of your runs (the model&apos;s replies, check results and timings). You
+          create this data on purpose, so you can inspect failed cases.
+        </li>
       </ul>
       <h2>What Forge does not store</h2>
       <ul className="bullets">
-        <li>Prompts and generated responses.</li>
+        <li>
+          Prompts and generated responses sent through the gateway or the Playground. Evaluation
+          Lab data, listed above, is the only exception.
+        </li>
         <li>Plaintext passwords or plaintext API keys.</li>
         <li>Audio content.</li>
       </ul>
@@ -74,7 +82,11 @@ export function PrivacyPage() {
         scripts, and fonts are served from the same origin.
       </p>
       <h2>Retention</h2>
-      <p>Automatic retention limits are not implemented yet.</p>
+      <p>
+        Automatic retention limits are not implemented yet. Archiving an evaluation dataset hides
+        it, but its runs and their stored replies remain. Deleting runs from the web app is not
+        available yet, so ask us if you need them removed.
+      </p>
       <p>
         Questions about your data: <a href={contactHref}>contact {site.company}</a>.
       </p>
