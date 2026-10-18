@@ -24,3 +24,5 @@ integrations/data
 .forge-backups
 .package
 *.md
+# The library's pyproject.toml names this file as its readme, so the install needs it.
+!integrations/README.md

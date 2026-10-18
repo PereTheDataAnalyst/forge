@@ -98,6 +98,16 @@ class Settings(BaseSettings):
     natlas_default_top_p: float = Field(default=1.0, gt=0, le=1)
     natlas_default_repetition_penalty: float = Field(default=1.12, ge=1, le=2)
 
+    # Evaluation Lab (docs/evaluation-lab.md). Runs call the model through the gateway like any
+    # other request, so the model host's capacity is the real limit. Keep concurrency low.
+    eval_max_cases: int = Field(default=100, ge=1, le=1000)
+    eval_max_concurrency: int = Field(default=2, ge=1, le=16)
+    eval_call_timeout_seconds: float = Field(default=90.0, ge=1, le=600)
+    eval_max_concurrent_runs_per_project: int = Field(default=1, ge=1, le=16)
+    eval_runs_per_hour: int = Field(default=20, ge=1, le=1000)
+    eval_max_run_seconds: int = Field(default=900, ge=10, le=7200)
+    eval_max_evaluations_per_project: int = Field(default=50, ge=1, le=500)
+
     @field_validator("database_url")
     @classmethod
     def _normalise_database_url(cls, value: str) -> str:

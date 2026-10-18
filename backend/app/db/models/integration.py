@@ -92,7 +92,9 @@ class EvaluationResult(Base):
     output: Mapped[str | None] = mapped_column(Text, nullable=True)
     latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    checks: Mapped[list[Any]] = mapped_column(
+    # A JSON document. The original schema defaulted it to a list; the evaluation module writes
+    # the whole case result here as one object (attempts, check results, error message).
+    checks: Mapped[Any] = mapped_column(
         JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     request_log_id: Mapped[uuid.UUID | None] = mapped_column(

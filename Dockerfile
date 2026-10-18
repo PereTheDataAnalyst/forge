@@ -26,6 +26,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     FRONTEND_DIST_DIR=/app/frontend-dist
 
 WORKDIR /app
+# The evaluation engine is a standalone library with no third-party dependencies. Only what the
+# install needs is copied: not its tests, docs, examples or speech worker.
+COPY integrations/pyproject.toml integrations/README.md /app/integrations/
+COPY integrations/src/ /app/integrations/src/
+RUN pip install /app/integrations
 COPY backend/ /app/backend/
 RUN pip install /app/backend
 
