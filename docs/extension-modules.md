@@ -1,6 +1,6 @@
 # Extension modules contract
 
-The Evaluation, Voice and MCP modules plug into the core platform without editing core files. This page is the contract between the core platform build (Agent 1) and the advanced integrations build (Agent 2). If something is missing here, ask for it as a change to the core instead of working around it.
+**Status: the Evaluation module is wired (`backend/app/modules/evaluation/`, `frontend/src/extensions/evaluation/`). Voice and MCP are not.** The Evaluation, Voice and MCP modules plug into the core platform without editing core files. This page is the contract between the core platform build (Agent 1) and the advanced integrations build (Agent 2). If something is missing here, ask for it as a change to the core instead of working around it.
 
 ## Ownership
 

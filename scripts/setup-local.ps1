@@ -145,6 +145,8 @@ if (-not (Test-Path -LiteralPath $venvPython)) {
 }
 Invoke-Native $venvPython @("-m", "pip", "install", "--upgrade", "pip") $backend
 Invoke-Native $venvPython @("-m", "pip", "install", "-e", ".[dev]") $backend
+# The backend imports the evaluation engine from the standalone library in integrations/.
+Invoke-Native $venvPython @("-m", "pip", "install", "-e", "..\integrations") $backend
 Write-Ok "backend dependencies installed"
 
 Write-Step "Database migrations"

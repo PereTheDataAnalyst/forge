@@ -58,7 +58,7 @@ Recorded from the owner's own build log, command output and screenshots.
 | Item | State |
 | --- | --- |
 | `integrations/` (Evaluation Lab engine, voice pipeline and speech worker, MCP server) merged as a standalone library | Files are byte-identical to the delivered package (100 files). Its author reports 501 unit tests on Linux. Re-run here in a sandbox without the MCP SDK and Starlette: the evaluation, security, voice and MCP service test modules pass (12 of 19 modules). The other seven need those packages and were not run |
-| Wiring of those modules into the gateway, database and screens | **Not done.** The library is not imported by the backend yet. Evaluation, speech and MCP are not available in the product |
+| Wiring of those modules into the gateway, database and screens | **Evaluation is wired** (see the Evaluation Lab build below). **Speech and MCP are not**: nothing imports them, so they are not available in the product |
 | Production container (`Dockerfile`, `docker/entrypoint.sh`) and web app served by the API process (`backend/app/web/spa.py`) | Built and deployed, see the section above |
 
 ## Added in the playground build, 15 October 2026
@@ -70,6 +70,19 @@ Recorded from the owner's own build log, command output and screenshots.
 | Navigation bar at 390 px | Found by that browser run: with four items the bar widened the whole page. Fixed in `layout.css` and re-checked |
 | Snippet builder (`lib/snippets.ts`) | Output for every existing caller is byte-identical to `main` (8 outputs compared). "Language not set" now omits the field, where it used to send an empty string the API rejects |
 | Owner verification | Pending: `check.ps1`, then `smoke-day1.ps1` against the live address with the model connected |
+
+## Added in the Evaluation Lab build, 17 October 2026
+
+| Item | State |
+| --- | --- |
+| Backend module `backend/app/modules/evaluation/` (adapter, database store, routes, dashboard hook) | Written. The pure logic is tested here against the real library: 22 tests in `test_evaluation_mapping.py` and `test_evaluation_adapter.py` run on every starter dataset and pass, and a mutation check (stop stripping NUL characters, remove the rate-limit retry, drop the repeat count) made the right tests fail |
+| Integration tests `backend/tests/test_evaluation.py` (about 16 tests: auth, ownership, create, run, cancel, export, dashboard, store read path, limits) | Written, compiled and checked by `static_check.py`. **Not run**: they need PostgreSQL and Redis. Run `scripts\check.ps1` |
+| Evaluation pages (`frontend/src/extensions/evaluation/`) | Type-checked (strict, no unused locals). Bundled with the real app shell and driven in headless Chromium against a mock API built from fixtures that the real engine produced (a completed run, a run with model errors, a cancelled run): 25 checks including progress and saving, cancel, export links, retries, a 404, desktop and phone widths, clean console. Not yet seen against the real backend |
+| Production image | `Dockerfile` now installs `integrations/` before the backend. The library builds from the minimal Docker context and loads its starter files when installed (checked here). The platform build is the first real Docker run |
+| Phone layout | Three root causes found by measuring, fixed in `layout.css` and `components.css`: the page container's grid column followed the widest table, and absolutely positioned table header labels escaped the scrolling wrapper |
+| Privacy and security copy | "Prompts and responses are not stored" was true only for request logs. The privacy page, security page and docs now say the Evaluation Lab stores dataset prompts and run outputs, and that deleting runs from the web app is not available yet |
+| Known limits | A run in progress when the service restarts is lost. The list can miss a run for a moment between "completed" and "saved". Datasets are immutable and their version label is not stored. `request_log_id` and `triggered_by` are not filled in. Runs cannot be deleted from the web app |
+| Owner verification | Pending: install the library into the backend environment, `check.ps1`, then the smoke test against the live address with the model connected |
 
 ## Not yet executed
 

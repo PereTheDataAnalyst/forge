@@ -81,6 +81,12 @@ These serve the web app. State-changing calls need the `X-CSRF-Token` header (va
 | `POST /projects/{id}/api-keys/{key_id}/rotate` | Rotate | Body `{ grace_period_seconds? }` (0 to 86400). Returns `new_key` with the full key and `previous`. 409 `api_key_not_active`. |
 | `GET /dashboard/summary?days=30` | Totals and recent activity | `days` from 1 to 90. All figures come from stored request data. |
 | `GET /projects/{id}/playground/models` | Text models with live status | Used by the Playground. `{ "data": [...] }`. 404 `project_not_found` for missing or foreign projects. |
+| `GET /evaluations/starters`, `GET /evaluations/checks` | Starter datasets and the check types | Evaluation Lab, see [evaluation-lab.md](evaluation-lab.md). |
+| `GET, POST /projects/{id}/evaluations`, `GET, DELETE /projects/{id}/evaluations/{eid}` | List, add (starter or JSON), read and archive datasets | 422 `invalid_dataset` lists every problem with a field and a message. 409 `evaluation_limit_reached`. |
+| `POST, GET /projects/{id}/evaluation-runs` | Start a run (202) and list runs | 503 `provider_unavailable` when the model host is away, 429 `rate_limited` while the project already has a run going, 429 `evaluation_rate_limited` per user per hour. |
+| `GET /projects/{id}/evaluation-runs/{rid}` | Progress, then the full result | `{ state, handle, run }`. `handle.persisted` is `null` while a finished run is being saved. |
+| `POST /projects/{id}/evaluation-runs/{rid}/cancel` | Stop a run | 202. 409 `evaluation_run_not_running` when it has ended. |
+| `GET /projects/{id}/evaluation-runs/{rid}/export?format=csv\|json` | Download a finished run | Contains model outputs, never cached. The CSV starts with a byte-order mark so Excel reads Hausa, Igbo and Yoruba text. |
 | `POST /projects/{id}/playground/chat` | Generate a reply with your session | Same body and response as `POST /chat`, see [playground.md](playground.md). Needs the CSRF header. Logged with source `playground`. 503 `provider_unavailable` while the model host is away. |
 
 ## Rate limits

@@ -197,6 +197,43 @@ if ($pgChat.Status -eq 200) {
     }
 }
 
+Write-Step "6c. Evaluation Lab (browser session, no API key)"
+$evStarters = Invoke-Api -Method GET -Path "/api/v1/evaluations/starters"
+Assert-Step "the starter datasets are listed" ($evStarters.Status -eq 200 -and @($evStarters.Json.data).Count -ge 1) "(status $($evStarters.Status))"
+$evBase = "/api/v1/projects/$projectId"
+$evForged = Invoke-Api -Method POST -Path "$evBase/evaluations" -JsonBody '{"starter_id":"starter-general-checks"}' -Csrf $false
+Assert-Step "adding a dataset without a CSRF token is rejected" ($evForged.Status -eq 403 -and (Get-ErrorCode $evForged) -eq "csrf_validation_failed") "(status $($evForged.Status))"
+$evCreate = Invoke-Api -Method POST -Path "$evBase/evaluations" -JsonBody '{"starter_id":"starter-general-checks"}'
+Assert-Step "a starter dataset is added" ($evCreate.Status -eq 201 -and $evCreate.Json.case_count -ge 1) "(status $($evCreate.Status))"
+$evId = [string]$evCreate.Json.id
+$evBad = Invoke-Api -Method POST -Path "$evBase/evaluations" -JsonBody '{"dataset":{"name":"Broken","cases":[{"id":"c1","category":"general","checks":[]}]}}'
+Assert-Step "a broken dataset is refused with a message per problem" ($evBad.Status -eq 422 -and (Get-ErrorCode $evBad) -eq "invalid_dataset" -and @($evBad.Json.error.details).Count -ge 1) "(status $($evBad.Status))"
+$evRunStart = Invoke-Api -Method POST -Path "$evBase/evaluation-runs" -JsonBody ('{"evaluation_id":"' + $evId + '"}')
+if ($pgChat.Status -eq 200) {
+    Assert-Step "an evaluation run starts" ($evRunStart.Status -eq 202 -and ([string]$evRunStart.Json.run_id).Length -eq 32) "(status $($evRunStart.Status))"
+    $evRunId = [string]$evRunStart.Json.run_id
+    $evDeadline = (Get-Date).AddSeconds(240)
+    $evBody = $null
+    while ((Get-Date) -lt $evDeadline) {
+        $evPoll = Invoke-Api -Method GET -Path "$evBase/evaluation-runs/$evRunId"
+        if ($evPoll.Status -ne 200) { break }
+        $evBody = $evPoll.Json
+        if ($evBody.state -ne "running" -and $null -ne $evBody.handle -and $null -ne $evBody.handle.persisted) { break }
+        Start-Sleep -Seconds 2
+    }
+    Assert-Step "the run completes against the real model" ($null -ne $evBody -and $evBody.state -eq "completed") "(state $($evBody.state))"
+    Assert-Step "the run is saved with a result for every case" ($evBody.handle.persisted -eq $true -and @($evBody.run.results).Count -eq $evCreate.Json.case_count)
+    $evSummary = $evBody.run.summary
+    Write-Info "pass rate $($evSummary.pass_rate), passed $($evSummary.counts.pass), failed $($evSummary.counts.fail), needs review $($evSummary.counts.review), errors $($evSummary.counts.error)"
+    $evExport = Invoke-Api -Method GET -Path "$evBase/evaluation-runs/$evRunId/export?format=json"
+    Assert-Step "the run exports as JSON" ($evExport.Status -eq 200) "(status $($evExport.Status))"
+} else {
+    Write-Warn2 "inference is not available, so the evaluation run itself was not exercised."
+    Assert-Step "a run is refused with a structured error while the model is away" ($evRunStart.Status -eq 503 -and (Get-ErrorCode $evRunStart) -eq "provider_unavailable" -and $null -ne $evRunStart.Json.error.request_id) "(status $($evRunStart.Status))"
+}
+$evArchive = Invoke-Api -Method DELETE -Path "$evBase/evaluations/$evId"
+Assert-Step "the dataset can be archived" ($evArchive.Status -eq 204) "(status $($evArchive.Status))"
+
 Write-Step "7. Dashboard"
 $dashboard = Invoke-Api -Method GET -Path "/api/v1/dashboard/summary"
 Assert-Step "the dashboard counts the request" ($dashboard.Status -eq 200 -and $dashboard.Json.totals.requests -ge 1)

@@ -64,6 +64,7 @@ try {
             if ($testRedis) { $env:TEST_REDIS_URL = $testRedis; $setTestRedis = $true }
             if (-not $env:TEST_DATABASE_URL) { Write-Warn2 "TEST_DATABASE_URL is not set, so integration tests will be skipped." }
 
+            Invoke-Gate "Backend: evaluation library is installed" $backend $venvPython @("-c", "import forge_integrations.evaluation")
             Invoke-Gate "Backend: ruff lint" $backend $venvPython @("-m", "ruff", "check", ".")
             Invoke-Gate "Backend: migrations match models (alembic check)" $backend $venvPython @("-m", "alembic", "check")
             Invoke-Gate "Backend: tests (pytest)" $backend $venvPython @("-m", "pytest", "-q")
