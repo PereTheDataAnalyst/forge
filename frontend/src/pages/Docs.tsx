@@ -9,6 +9,7 @@ const toc: [string, string][] = [
   ["quick-start", "Quick start"],
   ["authentication", "Authentication"],
   ["endpoints", "Endpoints"],
+  ["web-app", "Playground and Evaluations"],
   ["errors", "Errors"],
   ["rate-limits", "Rate limits"],
   ["connect-n-atlas", "Connect N-ATLAS"],
@@ -236,6 +237,31 @@ export function DocsPage() {
               an <code>X-Request-ID</code> header and rate limit headers.
             </p>
           </Endpoint>
+        </Section>
+
+        <Section id="web-app" title="Playground and Evaluations">
+          <p>
+            The web app has two tools that use the same gateway as your API keys. They need a
+            signed-in session and are pages in the app, not endpoints for programmatic use.
+          </p>
+          <ul className="bullets">
+            <li>
+              <strong>Playground.</strong> Try prompts with your own parameters, keep a
+              conversation going, and read the exact request and response. Requests are recorded
+              under one of your projects and appear in its request logs. Prompts and replies are
+              not stored.
+            </li>
+            <li>
+              <strong>Evaluation Lab.</strong> Add a dataset of prompts with checks, run it against
+              the model and read which checks held. Results export as CSV or JSON. The Lab stores
+              your datasets and the replies from your runs. There is no accuracy score and no
+              model-based judge.
+            </li>
+          </ul>
+          <p>
+            Sign in, then open <Link to="/app/playground">Playground</Link> or{" "}
+            <Link to="/app/evaluations">Evaluations</Link>.
+          </p>
         </Section>
 
         <Section id="errors" title="Errors">
