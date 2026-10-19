@@ -64,7 +64,7 @@ const module: FeatureModule = {
 export default module;
 ```
 
-Routes are mounted under `/app` behind authentication. Reuse `components/`, `lib/api.ts` patterns and the design tokens in `styles/tokens.css`. Do not add colours that are not derived from the logo. When a capability ships, change its entry in `frontend/src/config.ts` (`layers`) from `in_development` to `available`.
+Routes are mounted under `/app` behind authentication. Reuse `components/`, `lib/api.ts` patterns and the design tokens in `styles/tokens.css`. Do not add colours that are not derived from the logo. When a capability ships, change its entry in `frontend/src/config.ts` (`layers`) from `in_development` to `available`, and set its `appPath` to the page that opens it. That one entry also drives the capability tables on the landing page and the Platform panel on the dashboard, so nothing else needs editing to announce it.
 
 ## Verification before handing over
 
