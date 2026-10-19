@@ -4,7 +4,7 @@ import path from "node:path";
 import { FRONTEND, HERE } from "./paths.mjs";
 
 const TYPES = { ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".html": "text/html" };
-const STYLES = ["tokens", "base", "components", "layout", "app"];
+const STYLES = ["tokens", "base", "components", "layout", "landing", "docs", "app"];
 
 export function startServer(handleApi) {
   const server = http.createServer((req, res) => {
