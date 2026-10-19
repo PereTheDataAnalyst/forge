@@ -34,8 +34,118 @@
   grid-template-columns: 1fr;
 }
 
+/* Dashboard: getting started checklist ------------------------------------------------------ */
+.checklist {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+}
+.checklist__item {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+.checklist__mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 2px solid var(--blue-600);
+  border-radius: 50%;
+  color: var(--blue-700);
+  font: 600 0.8rem var(--font-display);
+}
+.checklist__mark::before {
+  content: counter(step);
+}
+.checklist__item--done .checklist__mark {
+  background: var(--blue-600);
+}
+.checklist__item--done .checklist__mark::before {
+  content: "";
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+.checklist__title {
+  font-weight: 600;
+}
+.checklist__item--done .checklist__title {
+  color: var(--text-muted);
+}
+.checklist__text {
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Dashboard: platform features ---------------------------------------------------------------- */
+.features__group {
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+.features {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 40px;
+  margin: 0 0 24px;
+}
+.panel__body > .features:last-child {
+  margin-bottom: 0;
+}
+.features__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.features__main {
+  min-width: 0;
+}
+.features__name {
+  font-size: 0.95rem;
+}
+.features__summary {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+.features__side {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
 @media (max-width: 1000px) {
   .grid-2 {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1000px) {
+  .features {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .checklist__item {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+  .checklist__item > .btn {
+    grid-column: 2;
+    justify-self: start;
   }
 }

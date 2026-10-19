@@ -9,6 +9,8 @@ import { formatDateTime, formatLatency, formatNumber, formatRelative } from "../
 import type { DashboardSummary, ProviderStatus } from "../lib/types";
 import { useAsyncData } from "../lib/useAsyncData";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
+import { GettingStarted } from "./dashboard/GettingStarted";
+import { PlatformPanel } from "./dashboard/PlatformPanel";
 
 const PROVIDER_LABEL: Record<ProviderStatus["status"], { tone: Tone; label: string }> = {
   ok: { tone: "success", label: "Connected" },
@@ -78,37 +80,6 @@ function Stats({ summary }: { summary: DashboardSummary }) {
         <div className="stat__note">Successful requests only</div>
       </div>
     </div>
-  );
-}
-
-function Onboarding() {
-  return (
-    <section className="panel" aria-labelledby="onboarding-title">
-      <div className="panel__header">
-        <h2 id="onboarding-title" className="panel__title">
-          Get started
-        </h2>
-      </div>
-      <div className="panel__body">
-        <ol className="steps">
-          <li>
-            <strong>Create a project.</strong> Projects group API keys, usage and logs.
-          </li>
-          <li>
-            <strong>Generate an API key.</strong> The full key is shown once, so store it safely.
-          </li>
-          <li>
-            <strong>Call N-ATLAS.</strong> Send a request to <code>/api/v1/chat</code> and watch it
-            appear here.
-          </li>
-        </ol>
-        <div style={{ marginTop: 16 }}>
-          <Link to="/app/projects" className="btn btn--primary">
-            Create your first project
-          </Link>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -287,7 +258,8 @@ export function DashboardPage() {
         <>
           <ProviderPanel provider={data.provider} />
           <Stats summary={data} />
-          {data.totals.projects === 0 ? <Onboarding /> : null}
+          <GettingStarted summary={data} />
+          <PlatformPanel />
           <RecentRequests summary={data} />
           <div className="grid-2">
             <KeysPanel summary={data} />
