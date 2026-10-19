@@ -40,7 +40,7 @@ Security is a design requirement from the first commit. This page maps each cont
 | No dependency audit has run | Unknown advisories | `npm audit` and `pip-audit` on a networked machine |
 | No Python lock file | Installs are not fully reproducible | Add a lock file generated on a networked machine |
 | Registration reveals whether an email exists | Account enumeration | Accepted, rate limited |
-| No two-factor authentication, organisations or roles | Single-owner projects only | Post-submission roadmap |
+| No two-factor authentication, organisations or roles | Single-owner projects only | Roadmap |
 | Worker uses a shared bearer token | No mutual TLS | Keep it on a private network |
 | IP addresses are stored in sessions and the audit log | Personal data | Retention and hashing policy |
 

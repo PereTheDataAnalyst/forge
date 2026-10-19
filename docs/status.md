@@ -69,20 +69,47 @@ Recorded from the owner's own build log, command output and screenshots.
 | Playground page (`frontend/src/extensions/playground/`) | Type-checked with the stub project (strict, no unused locals). Bundled with the real app shell and driven in headless Chromium against a mock API: 18 checks covering send, CSRF header, history, regenerate, parameter validation, provider error with request ID, stop, generated code in four languages, laptop, wide and phone widths, and a clean console. Not yet seen against the real backend or the real model |
 | Navigation bar at 390 px | Found by that browser run: with four items the bar widened the whole page. Fixed in `layout.css` and re-checked |
 | Snippet builder (`lib/snippets.ts`) | Output for every existing caller is byte-identical to `main` (8 outputs compared). "Language not set" now omits the field, where it used to send an empty string the API rejects |
-| Owner verification | Pending: `check.ps1`, then `smoke-day1.ps1` against the live address with the model connected |
+| Owner verification | Done on 18 October 2026: step 6b of the live smoke test (Playground, browser session, no API key) passed, see the section below |
 
-## Added in the Evaluation Lab build, 17 October 2026
+## Added in the Evaluation Lab build, 18 October 2026
 
 | Item | State |
 | --- | --- |
 | Backend module `backend/app/modules/evaluation/` (adapter, database store, routes, dashboard hook) | Written. The pure logic is tested here against the real library: 22 tests in `test_evaluation_mapping.py` and `test_evaluation_adapter.py` run on every starter dataset and pass, and a mutation check (stop stripping NUL characters, remove the rate-limit retry, drop the repeat count) made the right tests fail |
 | Integration tests `backend/tests/test_evaluation.py` (about 16 tests: auth, ownership, create, run, cancel, export, dashboard, store read path, limits) | Written, compiled and checked by `static_check.py`. **Not run**: they need PostgreSQL and Redis. Run `scripts\check.ps1` |
 | Evaluation pages (`frontend/src/extensions/evaluation/`) | Type-checked (strict, no unused locals). Bundled with the real app shell and driven in headless Chromium against a mock API built from fixtures that the real engine produced (a completed run, a run with model errors, a cancelled run): 25 checks including progress and saving, cancel, export links, retries, a 404, desktop and phone widths, clean console. Not yet seen against the real backend |
-| Production image | `Dockerfile` now installs `integrations/` before the backend. The library builds from the minimal Docker context and loads its starter files when installed (checked here). The platform build is the first real Docker run |
+| Production image | `Dockerfile` now installs `integrations/` before the backend. The library builds from the minimal Docker context and loads its starter files when installed (checked here). The platform build on 18 October 2026 was the first real Docker run and it succeeded, see the section below |
 | Phone layout | Three root causes found by measuring, fixed in `layout.css` and `components.css`: the page container's grid column followed the widest table, and absolutely positioned table header labels escaped the scrolling wrapper |
 | Privacy and security copy | "Prompts and responses are not stored" was true only for request logs. The privacy page, security page and docs now say the Evaluation Lab stores dataset prompts and run outputs, and that deleting runs from the web app is not available yet |
 | Known limits | A run in progress when the service restarts is lost. The list can miss a run for a moment between "completed" and "saved". Datasets are immutable and their version label is not stored. `request_log_id` and `triggered_by` are not filled in. Runs cannot be deleted from the web app |
-| Owner verification | Pending: install the library into the backend environment, `check.ps1`, then the smoke test against the live address with the model connected |
+| Owner verification | Done on 18 October 2026, see the section below |
+
+## Verified on the deployed instance, 18 October 2026
+
+Recorded from the owner's own command output and build log (Windows 11, deployment platform build 682fcf33 of commit c690b7eb, the merge of pull request 6).
+
+| Check | Result |
+| --- | --- |
+| `scripts\check.ps1` before the merge | All seven gates passed: the evaluation library is installed, ruff, `alembic check` (no new upgrade operations), 134 backend tests (one deprecation warning from the test client), type check, lint and production build. The worker tests were skipped because no worker environment exists on that machine |
+| `scripts\install-package.ps1` | Verified 55 files, refused the dry run because 26 files differed, then installed with `-Force` after backing those files up |
+| Image build on the deployment platform | 25 steps. The library installed before the backend, the container started and the platform reported the deployment live in 49 seconds |
+| `GET /api/v1/health/ready` on the live address | `ok` for the database, Redis and the provider, with model `NCAIR1/N-ATLaS` |
+| `scripts\smoke-day1.ps1` against the live address | Every required step passed, including 6b (Playground) and 6c (Evaluation Lab). The starter dataset ran against the real model: pass rate 0.875 (7 passed, 1 failed, 0 needs review, 0 errors) and was exported as JSON. One chat request returned `Hello!` with 44 tokens in 502 ms. The dashboard counted 12 requests. The script printed `N-ATLAS inference: VERIFIED` |
+| MCP compatibility probe (`scripts\probe-mcp-compat.ps1`) | Verdict COMPATIBLE: the SDK (mcp 2.3.0) installed next to the pinned versions, `pip check` was clean, and 235 library tests ran (4 skipped) and passed. **Limits of that verdict:** it ran on Python 3.13.9 while the production image runs 3.12, and its pins were FastAPI 0.143.2, Starlette 1.8.0 and SQLAlchemy 2.0.54 while the live build installed FastAPI 0.146.0, Starlette 1.9.0 and SQLAlchemy 2.0.55 |
+
+## Added in the product positioning build, 19 October 2026
+
+| Item | State |
+| --- | --- |
+| Landing page rewritten as a product page | The hero says what Forge does for a developer. Below it: a live status strip, the capability tables (available and in development), a four-step start, the two web app tools, a "what to expect in early access" section with the real limits, and a closing call to action. It makes no claim about pricing, uptime, users or performance. Three corrections were made on the way: the "Evaluate" step said that layer was in development although it is available; the hero button "Explore the playground" scrolled to the request builder, which does not call a model; and the page expanded the N-ATLAS acronym, which `integrations/docs/n-atlas-verified-facts.md` says Forge copy does not do |
+| Live status | Reads `GET /api/v1/health/ready` once per page load. By default the server caches its probe of the model host for 10 seconds, so visitors do not add load to the host. An absent model is shown as a warning that names the `provider_unavailable` error, a 503 as a platform fault, and a failed request as "Unknown" |
+| Dashboard | A "Get started" checklist computed from data the dashboard already loads (it disappears once all four steps are done) and a "Platform" panel that lists every capability with its status and a link. No backend change |
+| Capability registry | `layers` in `frontend/src/config.ts` is the single source for the landing tables and the dashboard panel. It gained `appPath` and `docsPath` and the entry "Request logs and charts" (in development), and "Evaluation" is now "Evaluation Lab". `challengeUrl` is removed |
+| Challenge wording | Removed from the landing page, the footer, `README.md`, `SECURITY.md` (which also named `develop`; fixes now go on `main`) and `docs/security.md`. Left on purpose: the factual note on how official N-ATLAS API credentials are issued (`docs/n-atlas-integration.md` and the Connect section of the in-app docs), the `competition-mvp` branch history, and the `integrations/` library docs |
+| Documentation | `docs/evaluation-lab.md` (linked from the README, this page and `config.py` but missing from the repository), `tools/README.md` and `tools/make_package.py` come from a later build of the Evaluation package that never reached the repository. The in-app documentation has a new "Playground and Evaluations" section |
+| MCP probe pins | `scripts\probe-mcp-compat.ps1` pinned three versions that the live build no longer installs. They now match the build log of deployment 682fcf33 (checked by script). The verdict above predates the fix, so run the probe again |
+| Verification here | Strict type check against stand-in declarations: clean. Copy lint: clean. Browser harness against a mock API, in headless Chromium: landing page 15 checks, dashboard 12, documentation 4, and the existing Playground (18) and Evaluation Lab (25) suites still pass. Four of five deliberate breaks (a request outside the 30 day count, an absent model shown as success, MCP marked available, the challenge link back in the footer) were caught by the right check. The fifth, removing a grid safeguard on the capability tables, is not caught at any width tested, because the stacked phone layout prevents that overflow by other means. The browser run also found a page that grew to 530 px at 390 px, which is fixed. Not run: backend tests, because this build changes no backend code |
+| Known limits | The sandbox has no web fonts, so line breaks differ a little from production. Below 760 px the capability tables become stacked rows and rely on ARIA roles to keep their table semantics. Nothing here has been seen on the live address yet |
 
 ## Not yet executed
 
@@ -95,7 +122,9 @@ Recorded from the owner's own build log, command output and screenshots.
 | A persistent model host | The model runs on a temporary notebook. See [model-hosting.md](model-hosting.md) |
 | SDKs, request log viewer, metrics charts | Not built |
 | Speech recognition inference | No speech worker has been run |
-| The interface at narrow widths and the landing page in a real browser | Not recorded |
+| MCP compatibility on the live versions | The probe ran on Python 3.13.9 against older pins. The pins are fixed. Run it again, ideally on Python 3.12 like the image |
+| Pinned backend dependencies | The production image installs the newest allowed versions, so one deployment can differ from the last (FastAPI 0.143.2 in an earlier build log, 0.146.0 on 18 October). Pin them before adding the MCP SDK |
+| The landing page and the dashboard on the live address | Driven in headless Chromium in the build sandbox only (see the positioning build above). Not yet seen on the live address |
 
 ## Rules for public copy
 

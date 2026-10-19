@@ -15,6 +15,7 @@ export function PublicLayout() {
           <BrandLink />
           <nav className="site-nav" aria-label="Primary">
             <a href="/#platform">Platform</a>
+            <a href="/#start">Get started</a>
             <a href="/#languages">Languages</a>
             <Link to="/docs">Documentation</Link>
             <Link to="/security">Security</Link>
@@ -58,15 +59,16 @@ export function PublicLayout() {
                   <a href="/#platform">Platform</a>
                 </li>
                 <li>
+                  <a href="/#start">Get started</a>
+                </li>
+                <li>
                   <a href="/#languages">Languages</a>
                 </li>
                 <li>
-                  <Link to="/docs">Documentation</Link>
+                  <a href="/#early-access">Early access</a>
                 </li>
                 <li>
-                  <a href={site.repoUrl} rel="noreferrer">
-                    GitHub
-                  </a>
+                  <Link to="/docs">Documentation</Link>
                 </li>
               </ul>
             </nav>
@@ -79,8 +81,8 @@ export function PublicLayout() {
                   </a>
                 </li>
                 <li>
-                  <a href={site.challengeUrl} rel="noreferrer">
-                    National AI Innovation Challenge
+                  <a href={site.repoUrl} rel="noreferrer">
+                    GitHub
                   </a>
                 </li>
               </ul>

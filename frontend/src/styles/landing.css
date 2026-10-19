@@ -16,13 +16,14 @@
 }
 .hero__title {
   grid-column: 1;
-  grid-row: 1 / span 3;
+  grid-row: 1 / span 4;
   font-weight: 700;
   font-size: clamp(2.75rem, 6vw, 4.6rem);
   line-height: 1.02;
 }
 .hero__lead,
 .hero__actions,
+.hero__status,
 .hero__meta {
   grid-column: 2;
 }
@@ -39,6 +40,43 @@
 }
 .hero__meta {
   font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Live status ------------------------------------------------------------------------------ */
+.status {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  /* Tall enough for the longest note, so the page below does not jump when the result arrives. */
+  min-height: 6.4rem;
+  max-width: 48ch;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
+}
+.status__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 0;
+}
+.status__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status__item dt {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+.status__item dd {
+  margin: 0;
+}
+.status__note {
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
@@ -275,9 +313,25 @@
 }
 
 .layers {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+}
+.layers__heading {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+.layers__table {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
+}
+/* Both tables use the same first and last column widths, so they line up one above the other. */
+.layers__table thead th:first-child {
+  width: 15rem;
+}
+.layers__table thead th:last-child {
+  width: 10.5rem;
 }
 .table tbody th[scope="row"] {
   padding: 12px 14px;
@@ -350,6 +404,9 @@
   margin: 4px 0 0;
   color: var(--gray-700);
 }
+.controls--single {
+  grid-template-columns: minmax(0, 1fr);
+}
 
 .cta {
   display: flex;
@@ -362,6 +419,11 @@
   margin-top: 8px;
   max-width: 60ch;
   color: var(--gray-700);
+}
+.cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .link-list {
@@ -389,6 +451,7 @@
   }
   .hero__lead,
   .hero__actions,
+  .hero__status,
   .hero__meta {
     grid-column: 1;
   }
@@ -414,5 +477,49 @@
   }
   .console__row {
     grid-template-columns: 1fr;
+  }
+
+  /* The capability tables become stacked rows. The ARIA roles in Landing.tsx keep the table
+     semantics that display: block would otherwise remove, and the heading above each table
+     already says whether its rows are available or in development. */
+  .layers__table {
+    position: relative;
+  }
+  .layers__table table,
+  .layers__table tbody,
+  .layers__table tr,
+  .layers__table th,
+  .layers__table td {
+    display: block;
+  }
+  .layers__table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .layers__table tbody tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .layers__table tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .layers__table tbody th[scope="row"] {
+    padding: 0;
+    border: 0;
+    white-space: normal;
+  }
+  .layers__table tbody td {
+    padding: 4px 0 0;
+    border: 0;
+  }
+  .layers__table tbody td:last-child {
+    padding-top: 10px;
   }
 }

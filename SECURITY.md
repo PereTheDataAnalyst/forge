@@ -12,7 +12,7 @@ In scope: the code in this repository, including the gateway, authentication, AP
 
 ## Supported versions
 
-Only the latest commit on `develop` is supported during the competition period.
+Security fixes are made on `main`, which is what runs in production. `develop` is kept equal to `main`.
 
 ## What exists
 

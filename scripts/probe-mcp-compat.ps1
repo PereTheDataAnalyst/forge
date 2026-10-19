@@ -38,11 +38,13 @@ function Add-Report([string]$Text) {
     Write-Info $Text
 }
 
-# The versions the live build installed (see its build log). Everything else may float.
+# The versions the live build installed (build log of deployment 682fcf33, 18 October 2026).
+# Everything else may float. The production image does not pin its dependencies yet, so read the
+# newest build log and update these pins before you trust a verdict.
 $pins = @(
-    "fastapi==0.143.2", "starlette==1.8.0", "pydantic==2.14.1", "pydantic-core==2.50.1",
+    "fastapi==0.146.0", "starlette==1.9.0", "pydantic==2.14.1", "pydantic-core==2.50.1",
     "pydantic-settings==2.16.0", "httpx==0.28.1", "uvicorn==0.54.0", "anyio==4.15.1",
-    "sqlalchemy==2.0.54", "asyncpg==0.32.0", "alembic==1.20.0", "redis==6.4.0",
+    "sqlalchemy==2.0.55", "asyncpg==0.32.0", "alembic==1.20.0", "redis==6.4.0",
     "argon2-cffi==25.1.0", "typing-extensions==4.16.0"
 )
 

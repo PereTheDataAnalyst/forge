@@ -1,16 +1,16 @@
 # N-ATLAS Forge
 
-Developer infrastructure for building with N-ATLAS. Built by StackTechnology for the National AI Innovation Challenge 2026 (Developer Infrastructure).
+Developer infrastructure for building with N-ATLAS: a hosted API gateway, a Playground, an Evaluation Lab and request metrics. Built by StackTechnology.
 
-**Live demo: <https://natlas-forge-18d307.prostackng.com.ng>**
+**Live site: <https://natlas-forge-18d307.prostackng.com.ng>**
 
 N-ATLaS is an initiative of the Federal Ministry of Communications, Innovation and Digital Economy, and powered by Awarri Technologies. N-ATLAS Forge is an independent project and is not endorsed by these organisations.
 
-> **Status: foundation build, deployed.** [docs/status.md](docs/status.md) states exactly what exists and what has been verified. Nothing in this repository returns invented model output.
+> **Status: early access, deployed.** [docs/status.md](docs/status.md) states exactly what exists and what has been verified. Nothing in this repository returns invented model output.
 
-## Try the live demo
+## Try it live
 
-1. Open <https://natlas-forge-18d307.prostackng.com.ng> and choose **Create account**. There is no email verification yet, so any email address works.
+1. Open <https://natlas-forge-18d307.prostackng.com.ng> and choose **Create an account**. There is no email verification yet, so any email address works.
 2. Create a project, then create an API key. The full key is shown once, so copy it.
 3. Send a request to the gateway.
 
@@ -42,8 +42,9 @@ The model runs on a separate GPU host that is not always on. The **N-ATLAS infer
 | API gateway: API key authentication with scopes, rate limits, validation, request IDs, structured errors | Implemented |
 | Accounts, projects and API keys (shown once, stored as keyed hashes, revoke and rotate) | Implemented |
 | Dashboard computed from real request data, request logs and usage counters in the database | Implemented |
-| Website, interactive request builder and documentation | Implemented |
-| Production container that serves the API and the web app, deployed on a container platform | Implemented. The smoke test against the live address passed on 14 October 2026, see [docs/status.md](docs/status.md). |
+| Dashboard "Get started" checklist and "Platform" panel, both driven by the capability registry in `frontend/src/config.ts` | Implemented |
+| Website with a live status strip, interactive request builder and documentation | Implemented |
+| Production container that serves the API and the web app, deployed on a container platform | Implemented. The smoke test against the live address passed on 18 October 2026, including the Playground and Evaluation Lab steps, see [docs/status.md](docs/status.md). |
 | N-ATLAS inference worker wrapping the official Transformers usage | Implemented. Run against the real model on a GPU notebook on 12 October 2026, see [docs/status.md](docs/status.md). It is not hosted persistently yet. |
 | Playground: prompts through your browser session, parameters, history, stop, raw request and response, generated code | Implemented, see [docs/playground.md](docs/playground.md) |
 | SDKs, request log viewer, metrics charts | Not built yet |
@@ -78,11 +79,12 @@ The official release is open weights on Hugging Face (`NCAIR1/N-ATLaS`, gated). 
 | `Dockerfile`, `docker/` | Production image that serves the API and the web app |
 | `scripts/` | PowerShell tooling |
 | `tools/checks/` | Dependency-free verification tools |
+| `tools/ui-harness/`, `tools/make_package.py` | Real-browser checks of the web app, and the builder of the packages that `scripts/install-package.ps1` installs |
 | `docs/` | Documentation |
 
 ## Documentation
 
-[Architecture](docs/architecture.md), [Local development](docs/local-development.md), [Environment variables](docs/environment-variables.md), [API reference](docs/api-reference.md), [N-ATLAS integration](docs/n-atlas-integration.md), [Security](docs/security.md), [Licensing and attribution](docs/licensing-and-attribution.md), [Extension modules](docs/extension-modules.md), [Branching and handoff](docs/branching-and-handoff.md), [Deployment](docs/deployment.md), [Model hosting](docs/model-hosting.md), [Troubleshooting](docs/troubleshooting.md), [Status](docs/status.md).
+[Architecture](docs/architecture.md), [Local development](docs/local-development.md), [Environment variables](docs/environment-variables.md), [API reference](docs/api-reference.md), [Playground](docs/playground.md), [Evaluation Lab](docs/evaluation-lab.md), [N-ATLAS integration](docs/n-atlas-integration.md), [Security](docs/security.md), [Licensing and attribution](docs/licensing-and-attribution.md), [Extension modules](docs/extension-modules.md), [Branching and handoff](docs/branching-and-handoff.md), [Deployment](docs/deployment.md), [Model hosting](docs/model-hosting.md), [Troubleshooting](docs/troubleshooting.md), [Status](docs/status.md).
 
 ## N-ATLAS terms and licence
 
