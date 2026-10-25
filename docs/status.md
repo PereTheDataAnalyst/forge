@@ -58,7 +58,7 @@ Recorded from the owner's own build log, command output and screenshots.
 | Item | State |
 | --- | --- |
 | `integrations/` (Evaluation Lab engine, voice pipeline and speech worker, MCP server) merged as a standalone library | Files are byte-identical to the delivered package (100 files). Its author reports 501 unit tests on Linux. Re-run here in a sandbox without the MCP SDK and Starlette: the evaluation, security, voice and MCP service test modules pass (12 of 19 modules). The other seven need those packages and were not run |
-| Wiring of those modules into the gateway, database and screens | **Evaluation is wired** (see the Evaluation Lab build below). **Speech and MCP are not**: nothing imports them, so they are not available in the product |
+| Wiring of those modules into the gateway, database and screens | **Evaluation is wired** (see the Evaluation Lab build below). **Voice and MCP are wired on the backend** (see the build of 24 October below) and have no web page yet, so they are not available in the product |
 | Production container (`Dockerfile`, `docker/entrypoint.sh`) and web app served by the API process (`backend/app/web/spa.py`) | Built and deployed, see the section above |
 
 ## Added in the playground build, 15 October 2026
@@ -111,6 +111,46 @@ Recorded from the owner's own command output and build log (Windows 11, deployme
 | Verification here | Strict type check against stand-in declarations: clean. Copy lint: clean. Browser harness against a mock API, in headless Chromium: landing page 15 checks, dashboard 12, documentation 4, and the existing Playground (18) and Evaluation Lab (25) suites still pass. Four of five deliberate breaks (a request outside the 30 day count, an absent model shown as success, MCP marked available, the challenge link back in the footer) were caught by the right check. The fifth, removing a grid safeguard on the capability tables, is not caught at any width tested, because the stacked phone layout prevents that overflow by other means. The browser run also found a page that grew to 530 px at 390 px, which is fixed. Not run: backend tests, because this build changes no backend code |
 | Known limits | The sandbox has no web fonts, so line breaks differ a little from production. Below 760 px the capability tables become stacked rows and rely on ARIA roles to keep their table semantics. Nothing here has been seen on the live address yet |
 
+## Added in the request logs, voice, MCP and SDK build, 24 October 2026
+
+This build is backend and tooling. **It adds no web page.** The capability registry in `frontend/src/config.ts` is unchanged, so the landing page and dashboard still label these four capabilities "In development", which is true: a developer can reach the new APIs and SDKs, but there is no page for them yet.
+
+| Item | State |
+| --- | --- |
+| Request logs and charts API: list with filters and paging, metrics (totals, zero-filled series, breakdowns), facets. See [request-logs.md](request-logs.md) | Written. The cursor, range, bucket and zero-fill logic is tested here: 12 tests. The SQL and the routes are covered by 10 integration tests that need PostgreSQL and Redis. **Those were not run.** No web page |
+| Voice backend module: raw-body transcription API for keys (`asr.transcribe`) and for the browser, status, recent requests, metadata-only storage, worker client, limits. See [voice.md](voice.md) | Written. 28 tests run here without a database, using a real generated WAV file and a fake worker. 9 integration tests were not run. **No speech worker has ever run against it.** No web page, no recording |
+| Content Security Policy | `media-src 'self' blob:` added so a recording can be played back. Nothing else in the policy changed |
+| MCP wiring: platform keys as credentials (`mcp.invoke` plus a client row), access groups, `/mcp` as an exact-path route, lifespan bridge, Redis limits, usage, audit, client management API. See [mcp.md](mcp.md) | Written. 61 tests run here with fakes (catalogue, authenticator, runtime, adapters). 10 integration tests and 1 SDK test were not run. **Never run against the real MCP SDK**, which could not be installed where this was written. No web page |
+| SDKs: Python and JavaScript/TypeScript. See [sdks.md](sdks.md) | Written and tested here against a real HTTP server on loopback: 29 Python tests and 29 JavaScript tests (strict TypeScript 6.0.3). **Not run against a live deployment.** Not published to PyPI or npm, and the names are provisional |
+| `backend/constraints.txt` and the Dockerfile's `pip install -c` | Platform versions copied from deployment #594725ef. MCP versions copied from the probe report of 18 October. The versions of `attrs`, `referencing`, `rpds-py` and `jsonschema-specifications` were not in that report and are not pinned. **The combination is unproven**: the 18 October probe used older FastAPI, Starlette and SQLAlchemy versions |
+| `check.ps1`, `probe-mcp-compat.ps1`, `smoke-day1.ps1` | `check.ps1` gains SDK gates and `-SkipSdk`. The probe reads `backend\constraints.txt` and runs the embedded MCP test as evidence only. The smoke test gains steps 6d (request logs), 6e (voice) and 6f (MCP), and reports speech recognition and the MCP server honestly. None of the three was executed here: PowerShell is not available in the sandbox, so they are statically validated only |
+
+### Verification run here
+
+| Check | Result |
+| --- | --- |
+| Tests that need no database or SDK: Evaluation (22, existing) and the new request log, MCP and Voice tests (101) | 123 passed |
+| Static analysis of the backend and the ORM against the migrations | No findings. No schema change |
+| Keyword names passed to ORM models, to `record_audit`, `create_key`, `revoke_key` and to the MCP library's constructors | Checked against the definitions by script. No mismatch |
+| Error codes and model IDs named in the new documents | Checked against the code and the verified facts file by script. One mistake was found and fixed: `audio_too_long` is HTTP 422, not 413 |
+| Deliberate breaks: 14 realistic defects introduced one at a time (archived project accepted, scope check removed, client row check removed, revoked client accepted, partial tool group granting access, request ID not passed on, loopback hosts dropped, extra gateway scope, upload slot never returned, error text leaking a cause, cursor accepting a time without a zone, buckets not zero-filled, a lifecycle future left unretrieved) | All 14 were caught by the right test |
+| PowerShell scripts (10): ASCII, CRLF, balanced delimiters, no forbidden constructs | Clean |
+| Git ignores no source-looking file after the `.gitignore` change | Clean |
+
+### Defects found by those tests while writing
+
+Each was a real fault in code written in this build, fixed before packaging.
+
+| Defect | Where |
+| --- | --- |
+| A crashed or timed-out SDK start-up left a future whose exception nobody retrieved, which asyncio logs as an error at garbage collection | `modules/mcp/runtime.py` |
+| A caller abort and an oversized response were treated as retryable failures for reads, so the client slept and retried | JavaScript SDK |
+| An abandoned response kept its socket open (a `ResourceWarning`) | Python SDK transport |
+| A module named `types.py` inside the package shadows the standard library when Python runs from inside it | Python SDK, renamed `results.py` |
+| A failed upload recorded the declared content type (`audio/wav`) where a success recorded the format (`wav`), and stored client-supplied text | `modules/voice/service.py` |
+| MCP client keys could live 365 days, beyond the 90 day maximum of the library's own security model | `modules/mcp/catalog.py` |
+| The test runner reported an `async def` test as passing without running it | `tools/checks/sandbox_run.py` |
+
 ## Not yet executed
 
 | Item | Why it is unverified |
@@ -120,10 +160,13 @@ Recorded from the owner's own command output and build log (Windows 11, deployme
 | Database backups and a restore test on the platform | Not set up |
 | Worker unit tests | The worker environment is not created on the owner's machine |
 | A persistent model host | The model runs on a temporary notebook. See [model-hosting.md](model-hosting.md) |
-| SDKs, request log viewer, metrics charts | Not built |
+| Web pages for request logs and charts, Voice and MCP | Not built. The APIs behind them exist (see the build of 24 October) |
+| Backend integration tests for request logs, Voice and MCP clients | Written without a database to run them against. Your first `check.ps1` run is their first run |
+| The SDKs against a live deployment | Tested only against a fake server that follows the API reference |
 | Speech recognition inference | No speech worker has been run |
-| MCP compatibility on the live versions | The probe ran on Python 3.13.9 against older pins. The pins are fixed. Run it again, ideally on Python 3.12 like the image |
-| Pinned backend dependencies | The production image installs the newest allowed versions, so one deployment can differ from the last (FastAPI 0.143.2 in an earlier build log, 0.146.0 on 18 October). Pin them before adding the MCP SDK |
+| MCP compatibility on the live versions | The probe ran on Python 3.13.9 against older pins. It now reads `backend\constraints.txt`, which has changed. Run it again, ideally on Python 3.12 like the image, and read its embedding check |
+| Pinned backend dependencies | `backend/constraints.txt` exists and the Dockerfile uses it, but it is unproven and four packages that arrive with the MCP SDK are not pinned yet. It has no hashes |
+| The MCP server on the live address | Never started with the real SDK. Smoke test step 6f is the first test of it |
 | The landing page and the dashboard on the live address | Driven in headless Chromium in the build sandbox only (see the positioning build above). Not yet seen on the live address |
 
 ## Rules for public copy

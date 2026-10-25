@@ -39,8 +39,14 @@ Provide these as real environment variables on the platform. Never commit them. 
 | `REGISTRATION_ENABLED` | `true` or `false` | Close sign-ups with `false`. |
 | `NATLAS_INFERENCE_URL` | `https://` address of the worker | Optional until a worker exists. Set together with the token. |
 | `NATLAS_INFERENCE_TOKEN` | Same value as the worker's `NATLAS_WORKER_TOKEN` | Set both or neither. |
+| `ASR_SERVICE_URL` | `https://` address of the speech worker | Optional until a speech worker exists. Set together with the token. See [voice.md](voice.md). |
+| `ASR_SERVICE_TOKEN` | The speech worker's token | Set both or neither. |
 
 The image already sets `APP_ENV=production`, `LOG_FORMAT=json`, `ENABLE_API_DOCS=false`, `PORT=8000` and `FRONTEND_DIST_DIR=/app/frontend-dist`.
+
+**MCP.** The MCP server runs in this container at `/mcp` and needs no variable: it is on by default. It accepts the host in `PUBLIC_BASE_URL` and the loopback names. If the platform's proxy rewrites the `Host` header, `/mcp` answers 421; add the name it sends to `MCP_ALLOWED_HOSTS`. See [mcp.md](mcp.md).
+
+**Pinned versions.** The image installs the exact versions in `backend/constraints.txt` (`pip install -c`), including the MCP SDK from the `mcp` extra. Run `.\scripts\probe-mcp-compat.ps1` before merging any change to that file or to the Dockerfile's install lines. A failed image build leaves the live site on the previous version.
 
 `.\scripts\prod-env.ps1` generates the two secrets, copies them to the clipboard one at a time without printing them, and reads the inference token from your local `.env`.
 

@@ -24,6 +24,11 @@ Security is a design requirement from the first commit. This page maps each cont
 | Audit | Registration, sign-in, failed sign-in, logout, project and key events | `services/audit.py` |
 | Telemetry bounds | Only supported model ids are recorded, so clients cannot create unbounded rows. Throttled requests are not written to the database. | `gateway_service._record` |
 | Worker | Shared bearer token, constant-time check, bounded queue and concurrency, no content logging | `inference/natlas-worker` |
+| MCP credentials | A client is a platform API key with the `mcp.invoke` scope plus a client row that lists the tools it may use. Both are looked up on every request and nothing is cached, so revoking either stops access on the next request. A key with `mcp.invoke` but no client row is refused. The key has no access to the REST gateway. | `modules/mcp/auth.py`, `modules/mcp/store.py` |
+| MCP server | Exact `Host` and `Origin` allow-lists, bounded bodies, no administrative tools by construction, per-client limits in Redis, audit events with names and codes only (never prompts, output, audio or tokens), the platform request ID and client address | `integrations/src/forge_integrations/mcp`, `modules/mcp/runtime.py` |
+| Voice | Audio is checked by size, signature and length before the worker sees it, and is never stored or logged. The worker address is checked against private-network, plain-http and redirect rules. Only a format name, never client text, is stored. | `modules/voice`, `integrations/src/forge_integrations/voice` |
+| Request logs | Owner session only, ownership checked first, every filter validated, rows hold no prompts or replies | `api/v1/request_logs.py`, `services/request_log_service.py` |
+| SDK clients | Redirects are never followed, plain http only for loopback, the key is never printed or put in an error, responses and uploads are size-bounded | `sdk/` |
 
 ## Tests that exercise these controls
 
@@ -38,7 +43,9 @@ Security is a design requirement from the first commit. This page maps each cont
 | Fixed-window rate limiter | Bursts up to twice the limit across a window edge | Sliding window if needed |
 | The web app's CSP must be set by the reverse proxy | The API sets its own CSP only for JSON | See [deployment.md](deployment.md) |
 | No dependency audit has run | Unknown advisories | `npm audit` and `pip-audit` on a networked machine |
-| No Python lock file | Installs are not fully reproducible | Add a lock file generated on a networked machine |
+| Dependency pins are written by hand | `backend/constraints.txt` fixes the versions the image installs, but it was copied from a build log and has no hashes. The versions of four packages that arrive with the MCP SDK are not pinned | Generate a hashed lock file on a networked machine, and add the four missing pins from the first build that installs the SDK |
+| The MCP server has not run against the real SDK where it was written | The mount, the lifespan bridge and the authenticator are tested with fakes only | Run `scripts\probe-mcp-compat.ps1`, then smoke test step 6f against the deployment |
+| No speech worker has run | Voice cannot transcribe, and nothing says how accurate the models are in practice | Deploy `integrations/asr-service` and run the smoke test |
 | Registration reveals whether an email exists | Account enumeration | Accepted, rate limited |
 | No two-factor authentication, organisations or roles | Single-owner projects only | Roadmap |
 | Worker uses a shared bearer token | No mutual TLS | Keep it on a private network |

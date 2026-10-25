@@ -6,12 +6,15 @@
   Backend:  ruff, alembic check (models match migrations), pytest (integration tests use the
             dedicated test database and Redis logical database 15 from .env).
   Worker:   pytest, only when the worker environment exists.
+  SDKs:     the Python client's tests (backend interpreter) and the JavaScript client's build and
+            tests (the frontend's TypeScript). Both start a real HTTP server on loopback.
   Frontend: TypeScript type check, ESLint and the production build.
   Exits with code 1 if any gate fails.
 
 .EXAMPLE
   .\scripts\check.ps1
   .\scripts\check.ps1 -SkipFrontend
+  .\scripts\check.ps1 -SkipSdk
   .\scripts\check.ps1 -WithAudit
 #>
 [CmdletBinding()]
@@ -19,6 +22,7 @@ param(
     [string]$RepoPath = (Split-Path -Parent $PSScriptRoot),
     [switch]$SkipBackend,
     [switch]$SkipFrontend,
+    [switch]$SkipSdk,
     [switch]$WithAudit
 )
 
@@ -75,6 +79,27 @@ try {
         } else {
             Write-Host ""
             Write-Info "Worker tests skipped (create the environment with .\scripts\setup-local.ps1 -WithWorker)."
+        }
+    }
+
+    if (-not $SkipSdk) {
+        $sdkPython = Join-Path (Join-Path $RepoPath "sdk") "python"
+        $sdkJavaScript = Join-Path (Join-Path $RepoPath "sdk") "javascript"
+        $sdkVenvPython = Get-VenvPython $backend
+        if (Test-Path -LiteralPath $sdkVenvPython) {
+            $sdkTestCode = "import sys, unittest; sys.path.insert(0, 'src'); unittest.main(module=None, argv=['unittest', 'discover', '-s', 'tests'])"
+            Invoke-Gate "SDK (Python): tests" $sdkPython $sdkVenvPython @("-c", $sdkTestCode)
+        } else {
+            Write-Fail "backend\.venv was not found. Run .\scripts\setup-local.ps1 first."
+            $results.Add(@{ Name = "SDK (Python): environment"; Passed = $false })
+        }
+        $tsc = Join-Path (Join-Path (Join-Path (Join-Path $frontend "node_modules") "typescript") "bin") "tsc"
+        if (Test-Path -LiteralPath $tsc) {
+            Invoke-Gate "SDK (JavaScript): build" $sdkJavaScript "node" @($tsc, "-p", "tsconfig.json")
+            Invoke-Gate "SDK (JavaScript): tests" $sdkJavaScript "node" @("--test", "test/client.test.mjs")
+        } else {
+            Write-Fail "frontend\node_modules\typescript was not found. Run .\scripts\setup-local.ps1 first."
+            $results.Add(@{ Name = "SDK (JavaScript): environment"; Passed = $false })
         }
     }
 

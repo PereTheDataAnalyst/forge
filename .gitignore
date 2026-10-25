@@ -25,6 +25,10 @@ huggingface/
 __pycache__/
 *.py[cod]
 *.egg-info/
+# Created by `pip install <folder>`. Keep these anchored: a bare `build/` would hide sources.
+/backend/build/
+/integrations/build/
+/sdk/python/build/
 .venv/
 venv/
 .pytest_cache/
