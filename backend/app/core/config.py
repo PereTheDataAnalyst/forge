@@ -108,6 +108,29 @@ class Settings(BaseSettings):
     eval_max_run_seconds: int = Field(default=900, ge=10, le=7200)
     eval_max_evaluations_per_project: int = Field(default=50, ge=1, le=500)
 
+    # Voice: speech recognition runs in a separate worker (integrations/asr-service). Leave the
+    # URL and token unset until that worker runs. See docs/voice.md.
+    asr_service_url: str | None = None
+    asr_service_token: SecretStr | None = None
+    # Extra host names the worker may use, comma separated. The host in ASR_SERVICE_URL is
+    # always allowed.
+    asr_allowed_hosts: str = ""
+    asr_timeout_seconds: float = Field(default=60.0, ge=5.0, le=300.0)
+    # Allow a worker on a private network address. Only for a network you control.
+    asr_allow_private_network: bool = False
+    # Allow an http:// worker URL on a non-loopback host in production. Private network only.
+    asr_allow_plaintext_remote: bool = False
+    voice_max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=65536, le=25 * 1024 * 1024)
+    voice_max_seconds: int = Field(default=30, ge=1, le=30)
+    voice_rate_limit_per_minute: int = Field(default=10, ge=1, le=600)
+    voice_max_concurrent: int = Field(default=4, ge=1, le=32)
+
+    # MCP server, served by this process at /mcp. See docs/mcp.md.
+    mcp_enabled: bool = True
+    # Extra Host header values the MCP endpoint accepts, comma separated. The host of
+    # PUBLIC_BASE_URL and loopback names are always accepted.
+    mcp_allowed_hosts: str = ""
+
     @field_validator("database_url")
     @classmethod
     def _normalise_database_url(cls, value: str) -> str:
@@ -133,6 +156,21 @@ class Settings(BaseSettings):
     @field_validator("natlas_inference_token", mode="before")
     @classmethod
     def _blank_token_is_none(cls, value: object) -> object:
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
+
+    @field_validator("asr_service_url", mode="before")
+    @classmethod
+    def _blank_asr_url_is_none(cls, value: object) -> object:
+        if isinstance(value, str):
+            value = value.strip().rstrip("/")
+            return value or None
+        return value
+
+    @field_validator("asr_service_token", mode="before")
+    @classmethod
+    def _blank_asr_token_is_none(cls, value: object) -> object:
         if isinstance(value, str) and not value.strip():
             return None
         return value
@@ -185,6 +223,27 @@ class Settings(BaseSettings):
                     "loopback. Set NATLAS_ALLOW_PLAINTEXT_REMOTE=true only for a private network."
                 )
 
+        if (self.asr_service_url is None) != (self.asr_service_token is None):
+            raise ValueError("Set both ASR_SERVICE_URL and ASR_SERVICE_TOKEN, or neither.")
+        if self.asr_service_url:
+            asr = urlsplit(self.asr_service_url)
+            if asr.scheme not in ("http", "https") or not asr.hostname:
+                raise ValueError("ASR_SERVICE_URL must be an http(s) URL with a host.")
+            if asr.username or asr.password or asr.query or asr.fragment:
+                raise ValueError(
+                    "ASR_SERVICE_URL must not contain credentials, a query or a fragment."
+                )
+            if (
+                self.is_production
+                and asr.scheme == "http"
+                and not _is_loopback_host(asr.hostname)
+                and not self.asr_allow_plaintext_remote
+            ):
+                raise ValueError(
+                    "In production ASR_SERVICE_URL must use https unless the worker is on "
+                    "loopback. Set ASR_ALLOW_PLAINTEXT_REMOTE=true only for a private network."
+                )
+
         if self.is_production:
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production.")
@@ -220,6 +279,10 @@ class Settings(BaseSettings):
     def natlas_configured(self) -> bool:
         return bool(self.natlas_inference_url and self.natlas_inference_token)
 
+    @property
+    def asr_configured(self) -> bool:
+        return bool(self.asr_service_url and self.asr_service_token)
+
     def safe_summary(self) -> dict[str, object]:
         """Non-sensitive configuration summary for the startup log."""
         db = urlsplit(self.database_url)
@@ -231,6 +294,8 @@ class Settings(BaseSettings):
             "redis_host": redis.hostname,
             "natlas_configured": self.natlas_configured,
             "natlas_model_id": self.natlas_model_id,
+            "asr_configured": self.asr_configured,
+            "mcp_enabled": self.mcp_enabled,
             "cookie_secure": self.cookie_secure,
             "api_docs_enabled": self.enable_api_docs,
             "web_app_served": bool((self.frontend_dist_dir or "").strip()),
