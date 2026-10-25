@@ -47,9 +47,10 @@ The model runs on a separate GPU host that is not always on. The **N-ATLAS infer
 | Production container that serves the API and the web app, deployed on a container platform | Implemented. The smoke test against the live address passed on 18 October 2026, including the Playground and Evaluation Lab steps, see [docs/status.md](docs/status.md). |
 | N-ATLAS inference worker wrapping the official Transformers usage | Implemented. Run against the real model on a GPU notebook on 12 October 2026, see [docs/status.md](docs/status.md). It is not hosted persistently yet. |
 | Playground: prompts through your browser session, parameters, history, stop, raw request and response, generated code | Implemented, see [docs/playground.md](docs/playground.md) |
-| SDKs, request log viewer, metrics charts | Not built yet |
+| Request logs and charts API (filters, paging, metrics, facets) | Implemented as an API, see [docs/request-logs.md](docs/request-logs.md). The web page is not built yet. |
+| Python and JavaScript/TypeScript SDKs (`sdk/`) | Implemented and tested against a fake server, see [docs/sdks.md](docs/sdks.md). Not published to PyPI or npm. |
 | Evaluation Lab: datasets (starters or your own JSON), runs through the gateway, per-case results, summary, CSV and JSON export, dashboard panel | Implemented, see [docs/evaluation-lab.md](docs/evaluation-lab.md) |
-| Speech recognition and MCP | Engines are in `integrations/` as a standalone library. They are not wired into the platform yet, so they are not available in the product. |
+| Voice and MCP | Wired into the backend as modules, see [docs/voice.md](docs/voice.md) and [docs/mcp.md](docs/mcp.md). No speech worker has run, the MCP server has not run with the real SDK, and neither has a web page yet, so they are not available in the product. |
 
 ## Quick start (Windows, PowerShell)
 
@@ -81,10 +82,11 @@ The official release is open weights on Hugging Face (`NCAIR1/N-ATLaS`, gated). 
 | `tools/checks/` | Dependency-free verification tools |
 | `tools/ui-harness/`, `tools/make_package.py` | Real-browser checks of the web app, and the builder of the packages that `scripts/install-package.ps1` installs |
 | `docs/` | Documentation |
+| `sdk/` | Python and JavaScript/TypeScript clients |
 
 ## Documentation
 
-[Architecture](docs/architecture.md), [Local development](docs/local-development.md), [Environment variables](docs/environment-variables.md), [API reference](docs/api-reference.md), [Playground](docs/playground.md), [Evaluation Lab](docs/evaluation-lab.md), [N-ATLAS integration](docs/n-atlas-integration.md), [Security](docs/security.md), [Licensing and attribution](docs/licensing-and-attribution.md), [Extension modules](docs/extension-modules.md), [Branching and handoff](docs/branching-and-handoff.md), [Deployment](docs/deployment.md), [Model hosting](docs/model-hosting.md), [Troubleshooting](docs/troubleshooting.md), [Status](docs/status.md).
+[Architecture](docs/architecture.md), [Local development](docs/local-development.md), [Environment variables](docs/environment-variables.md), [API reference](docs/api-reference.md), [Playground](docs/playground.md), [Evaluation Lab](docs/evaluation-lab.md), [Request logs](docs/request-logs.md), [Voice](docs/voice.md), [MCP server](docs/mcp.md), [SDKs](docs/sdks.md), [N-ATLAS integration](docs/n-atlas-integration.md), [Security](docs/security.md), [Licensing and attribution](docs/licensing-and-attribution.md), [Extension modules](docs/extension-modules.md), [Branching and handoff](docs/branching-and-handoff.md), [Deployment](docs/deployment.md), [Model hosting](docs/model-hosting.md), [Troubleshooting](docs/troubleshooting.md), [Status](docs/status.md).
 
 ## N-ATLAS terms and licence
 

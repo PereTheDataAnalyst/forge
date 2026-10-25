@@ -57,6 +57,18 @@ Local development reads `.env` at the repository root. Production should provide
 | `EVAL_RUNS_PER_HOUR` | `20` | Runs one user may start per hour. |
 | `EVAL_MAX_RUN_SECONDS` | `900` | A run that takes longer is stopped and keeps the results it has. |
 | `EVAL_MAX_EVALUATIONS_PER_PROJECT` | `50` | Active datasets per project. |
+| `ASR_SERVICE_URL` | unset | Address of the speech worker (`integrations/asr-service`). Set together with `ASR_SERVICE_TOKEN`, or leave both unset. Until then Voice answers 503 `provider_not_configured`. See [voice.md](voice.md). |
+| `ASR_SERVICE_TOKEN` | unset | The worker's bearer token. |
+| `ASR_ALLOWED_HOSTS` | empty | Extra host names the worker may use, comma separated. The host in `ASR_SERVICE_URL` is always allowed. |
+| `ASR_TIMEOUT_SECONDS` | `60.0` | Per call to the worker, 5 to 300. |
+| `ASR_ALLOW_PRIVATE_NETWORK` | `false` | Allow a worker on a loopback or private network address. Needed for a local worker. |
+| `ASR_ALLOW_PLAINTEXT_REMOTE` | `false` | In production, allow an `http://` worker URL on a non-loopback host. Private networks only. |
+| `VOICE_MAX_UPLOAD_BYTES` | `10485760` | Largest audio upload, 65536 to 26214400. |
+| `VOICE_MAX_SECONDS` | `30` | Longest clip, 1 to 30. |
+| `VOICE_RATE_LIMIT_PER_MINUTE` | `10` | Audio requests per API key or signed-in user, 1 to 600. |
+| `VOICE_MAX_CONCURRENT` | `4` | Uploads in flight per process, 1 to 32. More are turned away with 503 `provider_busy`. |
+| `MCP_ENABLED` | `true` | Serve the MCP server at `/mcp`. `false` makes `/mcp` answer 503 `mcp_disabled`. See [mcp.md](mcp.md). |
+| `MCP_ALLOWED_HOSTS` | empty | Extra `Host` header values `/mcp` accepts, comma separated. The host of `PUBLIC_BASE_URL` and the loopback names are always accepted. |
 
 ## Test-only variables
 

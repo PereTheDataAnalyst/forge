@@ -88,7 +88,15 @@ These serve the web app. State-changing calls need the `X-CSRF-Token` header (va
 | `POST /projects/{id}/evaluation-runs/{rid}/cancel` | Stop a run | 202. 409 `evaluation_run_not_running` when it has ended. |
 | `GET /projects/{id}/evaluation-runs/{rid}/export?format=csv\|json` | Download a finished run | Contains model outputs, never cached. The CSV starts with a byte-order mark so Excel reads Hausa, Igbo and Yoruba text. |
 | `POST /projects/{id}/playground/chat` | Generate a reply with your session | Same body and response as `POST /chat`, see [playground.md](playground.md). Needs the CSRF header. Logged with source `playground`. 503 `provider_unavailable` while the model host is away. |
+| `GET /projects/{id}/requests`, `/requests/metrics`, `/requests/facets` | Search, filter and chart a project's requests | Browser session. Filters `range`, `outcome`, `source`, `language`, `model`, `endpoint`, `error_code`, `status_code`, `api_key_id`, `request_id`, `min_latency_ms`; paging with `cursor` and `limit`. See [request-logs.md](request-logs.md). |
+| `POST /audio/transcriptions?language=yo` | Transcribe speech with a project API key | Needs the `asr.transcribe` scope. The body is the raw audio file. 503 `provider_not_configured` until a speech worker is connected. See [voice.md](voice.md). |
+| `POST /voice/transcriptions?project_id=...&language=yo` | The same, with your session | Needs the CSRF header. Adds `steps` to the response. |
+| `GET /voice/status`, `GET /projects/{id}/voice/requests` | Worker state, limits and models; recent requests | Metadata only, never a transcript. |
+| `GET /mcp/catalog` | Whether the MCP server runs here, and the kinds of access | Six access groups. See [mcp.md](mcp.md). |
+| `GET, POST /projects/{id}/mcp/clients` | List and create MCP clients | Body `{ name, access[], expires_in_days }` with `expires_in_days` 30 or 90. 201 with the full `key`, shown once. 409 `mcp_client_limit_reached` at 10 active clients. 422 `invalid_access`. |
+| `POST /projects/{id}/mcp/clients/{cid}/revoke` | Revoke a client and its key | Idempotent. 404 `mcp_client_not_found`. |
+| `POST /mcp` (not under `/api/v1`) | The MCP endpoint | A client's key as a bearer token. See [mcp.md](mcp.md). 503 `mcp_unavailable` or `mcp_disabled` when the server is not running. |
 
 ## Rate limits
 
-Gateway: `GATEWAY_RATE_LIMIT_PER_MINUTE` per API key (per signed-in user for the Playground), fixed one-minute window. Authentication: `AUTH_RATE_LIMIT_PER_MINUTE` per client address, and an account locks for `LOGIN_LOCKOUT_MINUTES` after `LOGIN_MAX_FAILURES` failed sign-ins. A limited request returns 429 with `Retry-After`.
+Gateway: `GATEWAY_RATE_LIMIT_PER_MINUTE` per API key (per signed-in user for the Playground), fixed one-minute window. Voice: `VOICE_RATE_LIMIT_PER_MINUTE` per API key or per signed-in user. MCP: per-client limits inside the MCP server, and tool calls that generate text also use the project's gateway limit. Authentication: `AUTH_RATE_LIMIT_PER_MINUTE` per client address, and an account locks for `LOGIN_LOCKOUT_MINUTES` after `LOGIN_MAX_FAILURES` failed sign-ins. A limited request returns 429 with `Retry-After`.

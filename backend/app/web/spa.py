@@ -35,11 +35,12 @@ mimetypes.add_type("font/woff", ".woff")
 mimetypes.add_type("application/manifest+json", ".webmanifest")
 
 # The build uses no inline scripts and loads nothing from other origins. React applies its
-# style props through the CSSOM, which this policy permits.
+# style props through the CSSOM, which this policy permits. media-src allows blob: so the Voice
+# page can play back a recording made in the browser before it is sent.
 HTML_CSP = (
     "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
-    "font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; "
-    "form-action 'self'; object-src 'none'"
+    "media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; "
+    "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 )
 IMMUTABLE_CACHE = "public, max-age=31536000, immutable"
 REVALIDATE_CACHE = "no-cache"

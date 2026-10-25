@@ -19,6 +19,7 @@ backend/tests
 docs
 tools
 scripts
+sdk
 inference
 integrations/data
 .forge-backups

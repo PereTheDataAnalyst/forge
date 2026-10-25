@@ -4,8 +4,10 @@ Usage (from the repository root): python3 tools/checks/sandbox_run.py tests.test
 
 Only IMPORT NAMES are stubbed (FastAPI, Starlette, SQLAlchemy). The code under test is the real
 code: real AppError, real gateway contracts, real evaluation library, real module files. The
-evaluation package's __init__ (which mounts routes) is skipped by pre-registering the package.
+__init__ of every extension package (which mounts routes) is skipped by pre-registering the
+package. A test written as `async def` is run to completion, so it can never pass by never running.
 """
+import asyncio
 import importlib
 import inspect
 import sys
@@ -35,13 +37,24 @@ stub("fastapi.exceptions", RequestValidationError=klass("RequestValidationError"
 stub("fastapi.responses", JSONResponse=klass("JSONResponse"))
 stub("starlette")
 stub("starlette.exceptions", HTTPException=klass("HTTPException"))
+
+
+class Route:  # records how it was built; the real one is Starlette's
+    def __init__(self, path, endpoint, **options):
+        self.path, self.endpoint, self.options = path, endpoint, options
+
+
+stub("starlette.routing", Route=Route)
 stub("sqlalchemy")
 stub("sqlalchemy.ext")
 stub("sqlalchemy.ext.asyncio", AsyncSession=klass("AsyncSession"))
 
-package = types.ModuleType("app.modules.evaluation")
-package.__path__ = [str(ROOT / "backend" / "app" / "modules" / "evaluation")]
-sys.modules["app.modules.evaluation"] = package
+modules_dir = ROOT / "backend" / "app" / "modules"
+for directory in sorted(modules_dir.iterdir()):
+    if directory.is_dir() and (directory / "__init__.py").exists():
+        package = types.ModuleType(f"app.modules.{directory.name}")
+        package.__path__ = [str(directory)]
+        sys.modules[f"app.modules.{directory.name}"] = package
 
 passed = failed = 0
 for module_name in sys.argv[1:]:
@@ -51,7 +64,9 @@ for module_name in sys.argv[1:]:
             continue
         started = time.perf_counter()
         try:
-            function()
+            outcome = function()
+            if inspect.iscoroutine(outcome):
+                asyncio.run(outcome)
         except Exception:
             failed += 1
             print(f"FAIL {module_name}.{name}")
